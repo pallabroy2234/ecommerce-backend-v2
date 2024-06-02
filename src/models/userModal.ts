@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, {Schema, Document} from "mongoose";
 
 
-interface IUser extends mongoose.Document {
+interface IUser extends Document {
     _id: string,
     name: string,
     email: string,
@@ -9,10 +9,14 @@ interface IUser extends mongoose.Document {
     role: "admin" | "user",
     dob: Date
     gender: "male" | "female"
+    createdAt: Date,
+    updatedAt: Date,
+    // * virtual attribute
+    age: number
 }
 
 
-const schema = new mongoose.Schema(
+const schema = new Schema(
     {
         _id: {
             type: String,
@@ -30,11 +34,11 @@ const schema = new mongoose.Schema(
             unique: true,
             required: [true, "Please provide an email"],
             trim: true,
-            lowercase:true,
+            lowercase: true,
             validate: {
-              validator : (value:string)=> {
-              return /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/.test(value)
-              },
+                validator: (value: string) => {
+                    return /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/.test(value)
+                },
                 message: (props: any) => `${props.value} is not a valid email address!`
             }
         },
@@ -55,7 +59,6 @@ const schema = new mongoose.Schema(
             type: String,
             enum: ["male", "female"],
             required: [true, "Please Enter your gender"],
-            trim:true,
         },
 
     }, {
@@ -63,4 +66,18 @@ const schema = new mongoose.Schema(
     })
 
 
-const User = mongoose.model<IUser>("User", schema);
+schema.virtual("age").get(function () {
+    const today = new Date();
+    const birthDate = new Date(this.dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const month = today.getMonth() - birthDate.getMonth();
+    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+})
+
+
+const UserModal = mongoose.model<IUser>("User", schema);
+
+export default UserModal;
