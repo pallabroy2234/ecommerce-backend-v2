@@ -1,8 +1,23 @@
 import express from "express";
-
 const port = 4000;
 
+// * Importing routes
+import userRouter from "./routes/userRouter.js"
+
 const app = express();
+
+
+
+
+
+
+
+
+// * Routes Define
+app.use("/api/v1/user", userRouter);
+
+
+
 
 
 // * Basic route

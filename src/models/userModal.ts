@@ -67,10 +67,10 @@ const schema = new Schema(
 
 
 schema.virtual("age").get(function () {
-    const today = new Date();
-    const birthDate = new Date(this.dob);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const month = today.getMonth() - birthDate.getMonth();
+    const today:Date = new Date();
+    const birthDate:Date = new Date(this.dob);
+    let age:number = today.getFullYear() - birthDate.getFullYear();
+    const month:number = today.getMonth() - birthDate.getMonth();
     if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
         age--;
     }
