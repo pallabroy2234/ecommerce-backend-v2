@@ -1,21 +1,23 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import logger from "./logger.js";
 
 dotenv.config();
 const connectDatabase = async (options = {}) => {
 	try {
 		const mode = process.env.MODE;
 		const prodDbUrl = process.env.PRODUCTION_DATABASE_URL;
-		const prodDbName = process.env.PRODUCTION_DATABASE_NAME;
-		// const prodDbName = "";
+		// const prodDbName = process.env.PRODUCTION_DATABASE_NAME;
+		const prodDbName = "";
 		const devDbUrl = process.env.DEVELOPMENT_DATABASE_URL;
-		const devDbName = process.env.DEVELOPMENT_DATABASE_NAME;
-		// const devDbName = "";
+		// const devDbName = process.env.DEVELOPMENT_DATABASE_NAME;
+		const devDbName = "";
 
 		if (mode === "production") {
 			if (!prodDbUrl || !prodDbName) {
 				// throw new Error("Production database URL or name is not defined");
-				throw new Error("Production database URL is not defined");
+				const errorMesasge = "Production database URL or name is not defined";
+				logger.error(errorMesasge);
 			}
 			await mongoose.connect(prodDbUrl as string, {
 				...options,
