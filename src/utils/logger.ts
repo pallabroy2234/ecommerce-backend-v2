@@ -1,14 +1,12 @@
 import dotenv from "dotenv";
-
 dotenv.config();
-
 import DailyRotateFile from "winston-daily-rotate-file";
-
 import path from "path";
 import {createLogger, format, transports} from "winston";
-
+import {getDirname} from "./getDirname.js";
 const {combine, timestamp, printf, errors, colorize, json} = format;
 
+const __dirname = getDirname(import.meta.url);
 const logFormat = printf(({level, message, timestamp, stack}) => {
 	return `${timestamp} ${level}: ${stack || message}`;
 });
