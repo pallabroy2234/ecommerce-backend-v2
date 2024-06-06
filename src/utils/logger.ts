@@ -1,9 +1,11 @@
 import dotenv from "dotenv";
+
 dotenv.config();
 import DailyRotateFile from "winston-daily-rotate-file";
 import path from "path";
 import {createLogger, format, transports} from "winston";
 import {getDirname} from "./getDirname.js";
+
 const {combine, timestamp, printf, errors, colorize, json} = format;
 
 const __dirname = getDirname(import.meta.url);
@@ -18,25 +20,28 @@ const logger = createLogger({
 		new transports.Console({
 			format: combine(colorize(), logFormat),
 		}),
+
 		new DailyRotateFile({
-			dirname: path.join(__dirname, "../../logs"),
+			dirname: path.join(__dirname, "../../src/logs"),
 			filename: "app-%DATE%.log",
+			// datePattern: "YYYY-MM-DD-HH-mm",
 			datePattern: "YYYY-MM-DD",
-			maxSize: "20m",
-			maxFiles: "14d",
+			// maxSize: "20m",
+			maxSize: "5m", // * "5m" = 5mb, "5k" = 5kb, "5g" = 5gb, "5t" = 5tb, "5b" = 5 bytes
+			maxFiles: "5d",
 			zippedArchive: true,
 			format: combine(json()),
 		}),
 	],
 	exceptionHandlers: [
 		new transports.File({
-			dirname: path.join(__dirname, "../../logs"),
+			dirname: path.join(__dirname, "../../src/logs"),
 			filename: "exceptions.log",
 		}),
 	],
 	rejectionHandlers: [
 		new transports.File({
-			dirname: path.join(__dirname, "../../logs"),
+			dirname: path.join(__dirname, "../../src/logs"),
 			filename: "rejections.log",
 		}),
 	],

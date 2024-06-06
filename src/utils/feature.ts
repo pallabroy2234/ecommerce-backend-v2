@@ -7,25 +7,24 @@ const connectDatabase = async (options = {}) => {
 	try {
 		const mode = process.env.MODE;
 		const prodDbUrl = process.env.PRODUCTION_DATABASE_URL;
-		// const prodDbName = process.env.PRODUCTION_DATABASE_NAME;
-		const prodDbName = "";
+		const prodDbName = process.env.PRODUCTION_DATABASE_NAME;
 		const devDbUrl = process.env.DEVELOPMENT_DATABASE_URL;
-		// const devDbName = process.env.DEVELOPMENT_DATABASE_NAME;
-		const devDbName = "";
+		const devDbName = process.env.DEVELOPMENT_DATABASE_NAME;
 
 		if (mode === "production") {
 			if (!prodDbUrl || !prodDbName) {
-				// throw new Error("Production database URL or name is not defined");
-				const errorMesasge = "Production database URL or name is not defined";
-				logger.error(errorMesasge);
+				const errorMessage = "Production database URL or name is not defined";
+				logger.error(errorMessage);
+				throw new Error(errorMessage);
 			}
 			await mongoose.connect(prodDbUrl as string, {
 				...options,
 				dbName: prodDbName as string,
 			});
-			console.log("Mongodb production connection established");
+			// console.log("Mongodb production connection established");
 			mongoose.connection.on("error", (error) => {
-				console.error("Mongodb connection error", error);
+				// console.error("Mongodb connection error", error);
+				logger.error("Mongodb connection error", error);
 			});
 		} else {
 			if (!devDbUrl || !devDbName) {
@@ -35,13 +34,16 @@ const connectDatabase = async (options = {}) => {
 				...options,
 				dbName: devDbName as string,
 			});
-			console.log("Mongodb local connection established");
+			// console.log("Mongodb local connection established");
+			logger.info("Mongodb local connection established");
 			mongoose.connection.on("error", (error) => {
-				console.error("Mongodb local connection error", error);
+				// console.error("Mongodb local connection error", error);
+				logger.error("Mongodb local connection error", error);
 			});
 		}
 	} catch (e) {
-		console.error("Could not connect to DB", e);
+		// console.error("Could not connect to DB", e);
+		logger.error("Could not connect to DB", e);
 	}
 };
 
