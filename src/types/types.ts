@@ -1,9 +1,8 @@
 export interface NewUserRequestBody {
-	_id: string;
+	_id: any;
 	name: string;
 	email: string;
 	image: string;
 	dob: Date;
-	role: "admin" | "user";
 	gender: "male" | "female" | "other";
 }

@@ -5,15 +5,15 @@ import {NewUserRequestBody} from "../types/types.js";
 // * handleNewUser -> /api/v1/user/new
 export const handleNewUser = async (req: Request<{}, {}, NewUserRequestBody>, res: Response, next: NextFunction) => {
 	try {
-		const {name, email, role, gender, image, dob, _id} = req.body;
-
+		const {name, email, gender, image, dob, _id} = req.body;
+		console.log(req.body);
 		const user = await UserModal.create({
 			_id,
 			name,
+			gender,
 			email,
 			image,
 			dob,
-			role,
 		});
 
 		return res.status(201).json({
@@ -22,6 +22,9 @@ export const handleNewUser = async (req: Request<{}, {}, NewUserRequestBody>, re
 			payload: user,
 		});
 	} catch (error) {
-		next(error);
+		return res.status(500).json({
+			success: false,
+			message: error,
+		});
 	}
 };

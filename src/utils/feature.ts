@@ -21,7 +21,7 @@ const connectDatabase = async (options = {}) => {
 				...options,
 				dbName: prodDbName as string,
 			});
-			// console.log("Mongodb production connection established");
+
 			mongoose.connection.on("error", (error) => {
 				// console.error("Mongodb connection error", error);
 				logger.error("Mongodb connection error", error);
@@ -44,6 +44,7 @@ const connectDatabase = async (options = {}) => {
 	} catch (e) {
 		// console.error("Could not connect to DB", e);
 		logger.error("Could not connect to DB", e);
+		process.exit(1);
 	}
 };
 

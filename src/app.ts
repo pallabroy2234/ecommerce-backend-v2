@@ -1,6 +1,10 @@
 import express from "express";
+import dotenv from "dotenv";
+import logger from "./utils/logger.js";
 
-const port = 4000;
+dotenv.config();
+
+const port = process.env.PORT || 4001;
 
 // * Importing routes
 import userRouter from "./routes/userRouter.js";
@@ -8,15 +12,23 @@ import connectDatabase from "./utils/feature.js";
 
 const app = express();
 
-// * Routes Define
+//  Database connection
+await connectDatabase();
+
+// * Middleware
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+//  Routes Define
 app.use("/api/v1/user", userRouter);
 
-// * Basic route
+//  Basic route
 app.get("/", (req, res) => {
 	res.send("Welcome to Ecommerce v2 Application!");
 });
 
 app.listen(port, () => {
-	console.log(`Server is working on http://localhost:${port}`);
-	connectDatabase();
+	// console.log(`Server is working on http://localhost:${port}`);
+	logger.info(`Server is working on http://localhost:${port}`);
 });
