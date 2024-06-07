@@ -1,16 +1,16 @@
-import express from "express";
+import express, {ErrorRequestHandler, Response, Request, NextFunction} from "express";
 import dotenv from "dotenv";
 import logger from "./utils/logger.js";
 import morgan from "morgan";
 import bodyParser from "body-parser";
-
+import {errorMiddleWare, notFound} from "./middlewares/error.js";
+import connectDatabase from "./utils/feature.js";
 dotenv.config();
 
 const port = process.env.PORT || 4001;
 
-// * Importing routes
+// *  Importing routes
 import userRouter from "./routes/userRouter.js";
-import connectDatabase from "./utils/feature.js";
 
 const app = express();
 
@@ -29,6 +29,12 @@ app.use("/api/v1/user", userRouter);
 app.get("/", (req, res) => {
 	res.send("Welcome to Ecommerce v2 Application!");
 });
+
+// ! Not Found Middleware
+app.use(notFound);
+
+// ! Error handling middleware
+app.use(errorMiddleWare);
 
 app.listen(port, () => {
 	// console.log(`Server is working on http://localhost:${port}`);
