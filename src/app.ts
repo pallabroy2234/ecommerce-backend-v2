@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import logger from "./utils/logger.js";
+import morgan from "morgan";
+import bodyParser from "body-parser";
 
 dotenv.config();
 
@@ -16,9 +18,9 @@ const app = express();
 await connectDatabase();
 
 // * Middleware
-
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(morgan("dev"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 //  Routes Define
 app.use("/api/v1/user", userRouter);
