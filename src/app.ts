@@ -1,21 +1,26 @@
-import express, {ErrorRequestHandler, Response, Request, NextFunction} from "express";
+import express, {Express} from "express";
 import dotenv from "dotenv";
 import logger from "./utils/logger.js";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import {errorMiddleWare, notFound} from "./middlewares/error.js";
 import connectDatabase from "./utils/feature.js";
+import swaggerDocs from "./utils/swagger.js";
+
 dotenv.config();
 
-const port = process.env.PORT || 4001;
+const port: string | number = process.env.PORT || 5000;
 
 // *  Importing routes
 import userRouter from "./routes/userRouter.js";
 
-const app = express();
+const app: Express = express();
 
-//  Database connection
+// *   Database connection
 await connectDatabase();
+
+// * Swagger Docs
+swaggerDocs(app, port);
 
 // * Middleware
 app.use(morgan("dev"));
@@ -37,6 +42,5 @@ app.use(notFound);
 app.use(errorMiddleWare);
 
 app.listen(port, () => {
-	// console.log(`Server is working on http://localhost:${port}`);
 	logger.info(`Server is working on http://localhost:${port}`);
 });
