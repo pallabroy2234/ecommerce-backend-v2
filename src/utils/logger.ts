@@ -17,10 +17,10 @@ const logger = createLogger({
 	level: "info",
 	format: combine(timestamp({format: "YYYY-MM-DD HH:mm:ss"}), errors({stack: true}), logFormat),
 	transports: [
-		new transports.Console({
-			format: combine(colorize(), logFormat),
-		}),
-
+		// * This transport for duplicate logs in console so commented
+		// new transports.Console({
+		// 	format: combine(colorize(), logFormat),
+		// }),
 		new DailyRotateFile({
 			dirname: path.join(__dirname, "../../src/logs"),
 			filename: "app-%DATE%.log",
