@@ -4,7 +4,7 @@ import {NewUserRequestBody} from "../types/types.js";
 import {TryCatch} from "../middlewares/error.js";
 import ErrorHandler from "../utils/utility-class.js";
 
-// * handleNewUser -> /api/v1/user/new
+//  handleNewUser -> /api/v1/user/new
 export const handleNewUser = TryCatch(async (req: Request<{}, {}, NewUserRequestBody>, res: Response, next: NextFunction) => {
 	const {name, email, gender, image, dob, _id} = req.body;
 
@@ -32,6 +32,7 @@ export const handleNewUser = TryCatch(async (req: Request<{}, {}, NewUserRequest
 	});
 });
 
+//  handleGetAllUsers -> /api/v1/user/all
 export const handleGetAllUsers = TryCatch(async (req, res, next) => {
 	const users = await UserModal.find({});
 	return res.status(200).json({
@@ -40,6 +41,7 @@ export const handleGetAllUsers = TryCatch(async (req, res, next) => {
 	});
 });
 
+//  handleGetUser -> /api/v1/user/:id
 export const handleGetUser = TryCatch(async (req, res, next) => {
 	const {id} = req.params;
 
