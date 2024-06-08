@@ -7,14 +7,14 @@ interface IUser extends Document {
 	image: string;
 	role: "admin" | "user";
 	dob: Date;
-	gender: "male" | "female";
+	gender: "male" | "female" | "other";
 	createdAt: Date;
 	updatedAt: Date;
 	// * virtual attribute
 	age: number;
 }
 
-const schema = new Schema(
+const userSchema = new Schema(
 	{
 		_id: {
 			type: String,
@@ -64,7 +64,7 @@ const schema = new Schema(
 	},
 );
 
-schema.virtual("age").get(function () {
+userSchema.virtual("age").get(function () {
 	const today: Date = new Date();
 	const birthDate: Date = new Date(this.dob);
 	let age: number = today.getFullYear() - birthDate.getFullYear();
@@ -75,6 +75,4 @@ schema.virtual("age").get(function () {
 	return age;
 });
 
-const UserModal = mongoose.model<IUser>("User", schema);
-
-export default UserModal;
+export const UserModel = mongoose.model<IUser>("User", userSchema);

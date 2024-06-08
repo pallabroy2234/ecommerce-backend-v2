@@ -12,7 +12,7 @@ dotenv.config();
 const port: string | number = process.env.PORT || 5000;
 
 // *  Importing routes
-import userRouter from "./routes/userRouter.js";
+import {userRouter} from "./routes/userRouter.js";
 
 const app: Express = express();
 
