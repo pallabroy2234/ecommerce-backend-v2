@@ -1,5 +1,4 @@
 import {Express, Request, Response} from "express";
-import {version} from "../../package.json";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import logger from "./logger.js";
@@ -18,12 +17,40 @@ const options: swaggerJsdoc.Options = {
 				email: "roy.pallabtushar2234@gmail.com",
 			},
 		},
+		servers: [
+			{
+				url: "http://localhost:4000/api/v1",
+				description: "Development server",
+			},
+		],
 		components: {
 			securitySchemes: {
 				bearerAuth: {
 					type: "http",
 					scheme: "bearer",
 					bearerFormat: "JWT",
+				},
+			},
+			responses: {
+				UnProcessableEntity: {
+					description: "Invalid data was sent",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								properties: {
+									success: {
+										type: "boolean",
+										example: false,
+									},
+									message: {
+										type: "string",
+										example: "Validaton Error",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},

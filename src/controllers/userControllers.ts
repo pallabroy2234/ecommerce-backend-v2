@@ -14,7 +14,6 @@ export const handleNewUser = TryCatch(async (req: Request<{}, {}, NewUserRequest
 		return res.status(200).json({
 			success: true,
 			message: `Welcome back ${name}!`,
-			payload: user,
 		});
 	}
 

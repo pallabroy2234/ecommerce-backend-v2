@@ -5,11 +5,78 @@ import {handleGetAllUsers, handleGetUser, handleNewUser} from "../controllers/us
 import {validateUser} from "../validators/validateUser.js";
 import {runValidation} from "../validators/index.js";
 
+/**
+ * @openapi
+ * /user/new:
+ *  post:
+ *    tags:
+ *      - User
+ *    summary: Create a new user
+ *    description: Create a new user
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/User'
+ *
+ *    responses:
+ *        200:
+ *          description: ok
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  success:
+ *                    type: boolean
+ *                    example: true
+ *                  message:
+ *                    type: string
+ *                    example: Welcome back Pallab Roy Tushar!
+ *        201:
+ *          description: created
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                   success:
+ *                     type: boolean
+ *                     example: true
+ *                   message:
+ *                     type: string
+ *                     example: Welcome Pallab Roy Tushar! Your account has been created successfully!
+ *        422:
+ *          $ref: '#/components/responses/UnProcessableEntity'
+ */
+
 // * Route -> /api/v1/user/new
 userRouter.post("/new", validateUser, runValidation(), handleNewUser);
 
 // * Route -> /api/v1/user/all
 userRouter.get("/all", handleGetAllUsers);
 
+/**
+ * @openapi
+ * /user/{id}:
+ *  get:
+ *    tags:
+ *      - User
+ *    summary: Get a user by id
+ *    description: Get a user by id
+ *    parameters:
+ *      - in: path
+ *        name: userId
+ *        required: true
+ *    responses:
+ *      200:
+ *        description: Success
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *
+ */
 // * Route -> /api/v1/user/:id
 userRouter.get("/:id", handleGetUser);
