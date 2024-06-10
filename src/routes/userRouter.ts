@@ -1,7 +1,7 @@
 import express from "express";
 
 export const userRouter = express.Router();
-import {handleGetAllUsers, handleGetUser, handleNewUser} from "../controllers/userControllers.js";
+import {handleDeleteUser, handleGetAllUsers, handleGetUser, handleNewUser} from "../controllers/userControllers.js";
 import {validateUser} from "../validators/validateUser.js";
 import {runValidation} from "../validators/index.js";
 
@@ -80,3 +80,6 @@ userRouter.get("/all", handleGetAllUsers);
  */
 // * Route -> /api/v1/user/:id
 userRouter.get("/:id", handleGetUser);
+
+// * Route -> /api/v1/user/:id
+userRouter.delete("/:id", handleDeleteUser);
