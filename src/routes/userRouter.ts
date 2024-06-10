@@ -4,6 +4,7 @@ export const userRouter = express.Router();
 import {handleDeleteUser, handleGetAllUsers, handleGetUser, handleNewUser} from "../controllers/userControllers.js";
 import {validateUser} from "../validators/validateUser.js";
 import {runValidation} from "../validators/index.js";
+import {isAdmin} from "../middlewares/auth.js";
 
 /**
  * @openapi
@@ -55,7 +56,7 @@ import {runValidation} from "../validators/index.js";
 userRouter.post("/new", validateUser, runValidation(), handleNewUser);
 
 // * Route -> /api/v1/user/all
-userRouter.get("/all", handleGetAllUsers);
+userRouter.get("/all", isAdmin, handleGetAllUsers);
 
 /**
  * @openapi
@@ -79,7 +80,7 @@ userRouter.get("/all", handleGetAllUsers);
  *
  */
 // * Route -> /api/v1/user/:id
-userRouter.get("/:id", handleGetUser);
+userRouter.get("/:id", isAdmin, handleGetUser);
 
 // * Route -> /api/v1/user/:id
-userRouter.delete("/:id", handleDeleteUser);
+userRouter.delete("/:id", isAdmin, handleDeleteUser);
