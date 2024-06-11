@@ -80,7 +80,7 @@ userRouter.get("/all", isAdmin, handleGetAllUsers);
  *
  */
 // * Route -> /api/v1/user/:id
-userRouter.get("/:id", isAdmin, handleGetUser);
+userRouter.get("/:id", handleGetUser);
 
 // * Route -> /api/v1/user/:id
 userRouter.delete("/:id", isAdmin, handleDeleteUser);
