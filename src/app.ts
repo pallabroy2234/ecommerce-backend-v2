@@ -13,6 +13,7 @@ const port: string | number = process.env.PORT || 5000;
 
 // *  Importing routes
 import {userRouter} from "./routes/userRouter.js";
+import productRouter from "./routes/productRouter.js";
 
 const app: Express = express();
 
@@ -29,6 +30,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //  Routes Define
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/product", productRouter);
 
 //  Basic route
 app.get("/", (req, res) => {
