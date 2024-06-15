@@ -23,10 +23,11 @@ const productSchema = new Schema(
 			minLength: [3, "Category must be at least 3 characters"],
 			required: [true, "Please provide a category"],
 			trim: true,
+			lowercase: true,
 		},
 		image: {
 			type: String,
-			required: [true, "Image is required"],
+			// required: [true, "Image is required"],
 		},
 		price: {
 			type: Number,
@@ -85,4 +86,4 @@ const productSchema = new Schema(
 	},
 );
 
-export const Product = mongoose.model<IProduct>("User", productSchema);
+export const Product = mongoose.model<IProduct>("products", productSchema);

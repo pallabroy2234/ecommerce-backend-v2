@@ -43,8 +43,8 @@ const unlinkAllFilesMiddleware = () => {
 	});
 };
 
-export const singelUpload = multer({
+export const singleUpload = multer({
 	storage,
 	fileFilter,
 	limits: {fileSize: MAX_FILE_SIZE},
-});
+}).single("image");

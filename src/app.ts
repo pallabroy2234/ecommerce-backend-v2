@@ -32,6 +32,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product", productRouter);
 
+// * Static Files
+app.use("/public", express.static("public"));
 //  Basic route
 app.get("/", (req, res) => {
 	res.send("Welcome to Ecommerce v2 Application!");
