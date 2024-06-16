@@ -7,6 +7,7 @@ import {isAdmin} from "../middlewares/auth.js";
 
 const productRouter = express.Router();
 
+// * Create New Product Route -> /api/v1/product/new
 productRouter.post(
 	"/new",
 	isAdmin,
@@ -15,5 +16,7 @@ productRouter.post(
 	runValidation(),
 	handleNewProduct,
 );
+
+// * Get latest products Route -> /api/v1/product/latest
 
 export default productRouter;

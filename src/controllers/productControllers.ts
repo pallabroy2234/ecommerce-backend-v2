@@ -4,6 +4,7 @@ import {TryCatch} from "../middlewares/error.js";
 import {Product} from "../models/productModel.js";
 import {NewProductRequestBody} from "../types/types.js";
 
+// * Create New Product handler ->  /api/v1/product/new
 export const handleNewProduct = TryCatch(
 	async (
 		req: Request<{}, {}, NewProductRequestBody>,
@@ -29,3 +30,9 @@ export const handleNewProduct = TryCatch(
 		});
 	},
 );
+
+// * Get latest Product handler -> /api/v1/product/latest
+
+// export const handleGetlatestProducts = TryCatch(
+//
+// )
