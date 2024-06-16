@@ -48,7 +48,7 @@ const productSchema = new Schema(
 						return "Price must be a number";
 					}
 					if (props.value < 0) {
-						return "Price must be a positive number";
+						return "Price must be a positive number ";
 					}
 					return `${props.value} is not a valid price`;
 				},
@@ -72,7 +72,7 @@ const productSchema = new Schema(
 					if (typeof props.value !== "number" || isNaN(props.value)) {
 						return "Stock must be a number";
 					}
-					if (props.value < 0) {
+					if (props.value <= 0) {
 						return "Stock must be a positive number";
 					}
 					return `${props.value} is not a valid stock`;

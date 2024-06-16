@@ -3,6 +3,8 @@ import {Request} from "express";
 import {extname, join} from "path";
 import {readdirSync, unlinkSync} from "fs";
 import logger from "../utils/logger.js";
+import {v4 as uuid} from "uuid";
+import ErrorHandler from "../utils/utility-class.js";
 
 const ALLOWED_FILE_TYPES = ["jpg", "jpeg", "png"];
 const UPLOAD_FOLDER = "./public/uploads";
@@ -13,15 +15,23 @@ const storage = multer.diskStorage({
 		cb(null, UPLOAD_FOLDER);
 	},
 	filename: function (req, file, cb) {
-		const extensionName = extname(file.originalname);
-		cb(null, Date.now() + "-" + file.originalname.replace(extensionName, "") + extensionName);
+		// const extensionName = extname(file.originalname);
+		// cb(null, Date.now() + "-" + file.originalname.replace(extensionName, "") + extensionName);
+		const id = uuid();
+		const extensionName = file.originalname.split(".").pop();
+		const fileName = `${id}.${extensionName}`;
+		cb(null, fileName);
 	},
 });
 
-const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (
+	req: Request,
+	file: Express.Multer.File,
+	cb: multer.FileFilterCallback,
+) => {
 	const extensionName = extname(file.originalname);
 	if (!ALLOWED_FILE_TYPES.includes(extensionName.substring(1))) {
-		return cb(new Error("Only images are allowed"));
+		return cb(new ErrorHandler("Only images are allowed", 400));
 	}
 	// Uncomment and adjust the logic if you need to limit the number of files
 	// if (req.files && req.files.length >= 3) {

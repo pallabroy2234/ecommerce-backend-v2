@@ -2,12 +2,30 @@ import {NextFunction, Request, Response} from "express";
 import logger from "../utils/logger.js";
 import ErrorHandler from "../utils/utility-class.js";
 import {ControllerType} from "../types/types.js";
+import multer from "multer";
 
 // ! Error Middleware Function
-export const errorMiddleWare = (err: ErrorHandler, req: Request, res: Response, next: NextFunction) => {
+export const errorMiddleWare = (
+	err: ErrorHandler,
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
 	logger.error(err.message);
+
+	// Handle Multer-specific errors
+	if (err instanceof multer.MulterError) {
+		if (err.code === "LIMIT_FILE_SIZE") {
+			logger.error("File size should not exceed 2 MB");
+			return res
+				.status(400)
+				.json({message: "File size should not exceed 2 MB"});
+		}
+	}
+
 	err.message = err.message || "Internal Server Error";
 	err.statusCode = err.statusCode || 500;
+
 	return res.status(err.statusCode).json({
 		success: false,
 		message: err.message,
