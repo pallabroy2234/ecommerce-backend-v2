@@ -3,10 +3,14 @@ import {
 	handleGetAllAdminProducts,
 	handleGetAllCategories,
 	handleGetLatestProducts,
+	handleGetSingleProduct,
 	handleNewProduct,
 } from "../controllers/productControllers.js";
 import {singleUpload} from "../middlewares/multer.js";
-import {validateProduct} from "../validators/validateProduct.js";
+import {
+	validateProduct,
+	validateSingleProduct,
+} from "../validators/validateProduct.js";
 import {runValidation} from "../validators/index.js";
 import {isAdmin} from "../middlewares/auth.js";
 
@@ -30,4 +34,13 @@ productRouter.get("/categories", handleGetAllCategories);
 
 // * Get All Products Route -> /api/v1/product/admin-products
 productRouter.get("/admin-products", isAdmin, handleGetAllAdminProducts);
+
+// * Get Single Product Route -> /api/v1/product/:id
+productRouter.get(
+	"/:id",
+	validateSingleProduct,
+	runValidation(400),
+	handleGetSingleProduct,
+);
+
 export default productRouter;

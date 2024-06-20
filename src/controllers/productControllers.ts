@@ -62,7 +62,7 @@ export const handleGetAllCategories = TryCatch(
 	},
 );
 
-//* Get Admin all Products handler -> /api/v1/product/admin-products
+// * Get Admin all Products handler -> /api/v1/product/admin-products
 
 export const handleGetAllAdminProducts = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
@@ -73,6 +73,22 @@ export const handleGetAllAdminProducts = TryCatch(
 			message:
 				products.length > 0 ? "Latest products" : "No products found",
 			payload: products.length > 0 ? products : [],
+		});
+	},
+);
+
+// * Get Single Product handler -> /api/v1/product/:id
+
+export const handleGetSingleProduct = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const {id} = req.params;
+
+		const product = await Product.findById({_id: id});
+
+		return res.status(product ? 200 : 404).json({
+			success: product ? true : false,
+			message: product ? "Product found" : "Product not found",
+			payload: product ? product : {},
 		});
 	},
 );

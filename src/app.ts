@@ -17,9 +17,6 @@ import productRouter from "./routes/productRouter.js";
 
 const app: Express = express();
 
-// *   Database connection
-await connectDatabase();
-
 // * Swagger Docs
 swaggerDocs(app, port);
 
@@ -45,6 +42,8 @@ app.use(notFound);
 // ! Error handling middleware
 app.use(errorMiddleWare);
 
-app.listen(port, () => {
+app.listen(port, async () => {
 	logger.info(`Server is working on http://localhost:${port}`);
+	// *   Database connection
+	await connectDatabase();
 });

@@ -1,4 +1,4 @@
-import {body} from "express-validator";
+import {body, param} from "express-validator";
 
 export const validateProduct = [
 	body("name")
@@ -40,4 +40,12 @@ export const validateProduct = [
 		}
 		return true;
 	}),
+];
+
+export const validateSingleProduct = [
+	param("id")
+		.notEmpty()
+		.withMessage("Product id is required")
+		.isMongoId()
+		.withMessage("Invalid product id"),
 ];
