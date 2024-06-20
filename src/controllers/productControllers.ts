@@ -61,3 +61,18 @@ export const handleGetAllCategories = TryCatch(
 		});
 	},
 );
+
+//* Get Admin all Products handler -> /api/v1/product/admin-products
+
+export const handleGetAllAdminProducts = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const products = await Product.find({});
+
+		return res.status(products.length > 0 ? 200 : 404).json({
+			success: products.length > 0 ? true : false,
+			message:
+				products.length > 0 ? "Latest products" : "No products found",
+			payload: products.length > 0 ? products : [],
+		});
+	},
+);
