@@ -20,4 +20,18 @@ export interface NewProductRequestBody {
 
 // * Controller Types
 
-export type ControllerType = (req: Request, res: Response, next: NextFunction) => Promise<void | Response<any, Record<string, any>>>;
+export type ControllerType = (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => Promise<void | Response<any, Record<string, any>>>;
+
+// * Product update request body
+
+export interface ProductUpdateRequestBody {
+	name?: string;
+	category?: string;
+	price?: number;
+	stock?: number;
+	image?: string;
+}

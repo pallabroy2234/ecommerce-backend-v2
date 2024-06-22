@@ -5,11 +5,13 @@ import {
 	handleGetLatestProducts,
 	handleGetSingleProduct,
 	handleNewProduct,
+	handleUpdateSingleProduct,
 } from "../controllers/productControllers.js";
 import {singleUpload} from "../middlewares/multer.js";
 import {
 	validateProduct,
 	validateSingleProduct,
+	validateUpdateProduct,
 } from "../validators/validateProduct.js";
 import {runValidation} from "../validators/index.js";
 import {isAdmin} from "../middlewares/auth.js";
@@ -41,6 +43,15 @@ productRouter.get(
 	validateSingleProduct,
 	runValidation(400),
 	handleGetSingleProduct,
+);
+
+// * Update Single Product Route -> /api/v1/Product/:id
+productRouter.put(
+	"/:id",
+	singleUpload,
+	validateUpdateProduct,
+	runValidation(422),
+	handleUpdateSingleProduct,
 );
 
 export default productRouter;

@@ -2,7 +2,13 @@ import {Request, Response, NextFunction} from "express";
 import {TryCatch} from "../middlewares/error.js";
 
 import {Product} from "../models/productModel.js";
-import {NewProductRequestBody} from "../types/types.js";
+import {
+	NewProductRequestBody,
+	ProductUpdateRequestBody,
+} from "../types/types.js";
+import ErrorHandler from "../utils/utility-class.js";
+import {unlinkSync} from "fs";
+import {deleteImage} from "../validators/index.js";
 
 // * Create New Product handler ->  /api/v1/product/new
 export const handleNewProduct = TryCatch(
@@ -89,6 +95,77 @@ export const handleGetSingleProduct = TryCatch(
 			success: product ? true : false,
 			message: product ? "Product found" : "Product not found",
 			payload: product ? product : {},
+		});
+	},
+);
+
+// * Update Single Product handler -> /api/v1/product/:id
+
+// ? Function to validate and prepare updates
+const prepareUpdates = (
+	body: any,
+	allowedFields: (keyof ProductUpdateRequestBody)[],
+): Partial<ProductUpdateRequestBody> => {
+	let updates: Partial<ProductUpdateRequestBody> = {};
+	for (let key in body) {
+		if (allowedFields.includes(key as keyof ProductUpdateRequestBody)) {
+			(updates as any)[key] = body[key as keyof ProductUpdateRequestBody];
+		} else {
+			throw new ErrorHandler(
+				`Field ${key} is not allowed for update`,
+				400,
+			);
+		}
+	}
+	return updates;
+};
+
+export const handleUpdateSingleProduct = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const {id} = req.params;
+		const image = req.file;
+		const productExists = await Product.findById({_id: id});
+		if (!productExists)
+			return next(new ErrorHandler("Product not found", 404));
+
+		const allowFields: (keyof ProductUpdateRequestBody)[] = [
+			"name",
+			"category",
+			"price",
+			"stock",
+			"image",
+		];
+
+		// * Update allowed fields
+		let updates: Partial<ProductUpdateRequestBody> = prepareUpdates(
+			req.body,
+			allowFields,
+		);
+
+		//  * Old image path delete and new image path update
+		if (image) {
+			if (productExists.image) {
+				deleteImage(productExists.image);
+			}
+			updates.image = image.path;
+		}
+
+		const updatedProduct = await Product.findByIdAndUpdate(
+			{_id: id},
+			updates,
+			{
+				new: true,
+				runValidators: true,
+				context: "query",
+			},
+		);
+		if (!updatedProduct)
+			return next(new ErrorHandler("Error updating product", 404));
+
+		return res.status(200).json({
+			success: true,
+			message: "Product updated successfully",
+			payload: updatedProduct,
 		});
 	},
 );

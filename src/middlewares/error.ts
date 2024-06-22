@@ -17,9 +17,10 @@ export const errorMiddleWare = (
 	if (err instanceof multer.MulterError) {
 		if (err.code === "LIMIT_FILE_SIZE") {
 			logger.error("File size should not exceed 2 MB");
-			return res
-				.status(400)
-				.json({message: "File size should not exceed 2 MB"});
+			return res.status(400).json({
+				success: false,
+				message: "File size should not exceed 2 MB",
+			});
 		}
 	}
 
