@@ -1,11 +1,7 @@
-import ErrorHandler from "./utility-class.js";
-import logger from "./logger.js";
-import {Request, Response, NextFunction} from "express";
+import {Request} from "express";
 
-export const allowedField = (
+export const validateAllowedFields = (
 	req: Request,
-	res: Response,
-	next: NextFunction,
 	allowedFields: string[],
 ) => {
 	const bodyKeys = Object.keys(req.body);
@@ -14,13 +10,25 @@ export const allowedField = (
 	);
 
 	if (invalidFields.length > 0) {
-		logger.warn(`Invalid fields found: ${invalidFields.join(", ")}`);
-		return next(
-			new ErrorHandler(
-				`Invalid fields : ${invalidFields.join(", ")}`,
-				400,
-			),
-		);
+		return invalidFields;
 	}
-	next();
 };
+
+// export const allowedField = (
+// 	req: Request,
+// 	res: Response,
+// 	allowedFields: string[],
+// ) => {
+// 	const bodyKeys = Object.keys(req.body);
+// 	const invalidFields = bodyKeys.filter(
+// 		(key) => !allowedFields.includes(key),
+// 	);
+//
+// 	if (invalidFields.length > 0) {
+// 		logger.warn(`Invalid fields found: ${invalidFields.join(", ")}`);
+// 		return res.status(422).json({
+// 			success: false,
+// 			message: `Invalid fields found: ${invalidFields.join(", ")}`,
+// 		});
+// 	}
+// };

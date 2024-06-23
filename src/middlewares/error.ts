@@ -5,13 +5,46 @@ import {ControllerType} from "../types/types.js";
 import multer from "multer";
 
 // ! Error Middleware Function
+// export const errorMiddleWare = (
+// 	err: ErrorHandler,
+// 	req: Request,
+// 	res: Response,
+// 	next: NextFunction,
+// ) => {
+// 	logger.error(err.message);
+//
+// 	// Handle Multer-specific errors
+// 	if (err instanceof multer.MulterError) {
+// 		if (err.code === "LIMIT_FILE_SIZE") {
+// 			logger.error("File size should not exceed 2 MB");
+// 			return res.status(400).json({
+// 				success: false,
+// 				message: "File size should not exceed 2 MB",
+// 			});
+// 		}
+// 	}
+//
+// 	err.message = err.message || "Internal Server Error";
+// 	err.statusCode = err.statusCode || 500;
+//
+// 	return res.status(err.statusCode).json({
+// 		success: false,
+// 		message: err.message,
+// 	});
+// };
+
 export const errorMiddleWare = (
-	err: ErrorHandler,
+	err: ErrorHandler | multer.MulterError | Error,
 	req: Request,
 	res: Response,
 	next: NextFunction,
 ) => {
 	logger.error(err.message);
+
+	// Check if headers are already sent
+	if (res.headersSent) {
+		return next(err);
+	}
 
 	// Handle Multer-specific errors
 	if (err instanceof multer.MulterError) {
@@ -22,12 +55,22 @@ export const errorMiddleWare = (
 				message: "File size should not exceed 2 MB",
 			});
 		}
+		// You can handle other multer errors here
 	}
 
-	err.message = err.message || "Internal Server Error";
-	err.statusCode = err.statusCode || 500;
+	// Handle custom ErrorHandler
+	if (err instanceof ErrorHandler) {
+		return res.status(err.statusCode).json({
+			success: false,
+			message: err.message,
+		});
+	}
 
-	return res.status(err.statusCode).json({
+	// Handle generic errors
+	err.message = err.message || "Internal Server Error";
+	const statusCode = (err instanceof ErrorHandler && err.statusCode) || 500;
+
+	return res.status(statusCode).json({
 		success: false,
 		message: err.message,
 	});

@@ -8,6 +8,7 @@ import {
 } from "../types/types.js";
 import ErrorHandler from "../utils/utility-class.js";
 import {deleteImage} from "../validators/index.js";
+import {validateAllowedFields} from "../utils/allowedFields.js";
 
 // * Create New Product handler ->  /api/v1/product/new
 export const handleNewProduct = TryCatch(
@@ -18,7 +19,28 @@ export const handleNewProduct = TryCatch(
 	) => {
 		const {name, category, price, stock} = req.body;
 
+		//  list of allowed fields
+
 		const image = req.file;
+
+		// ! Check for any field that are not allowed
+		const allowedFields: (keyof NewProductRequestBody)[] = [
+			"name",
+			"category",
+			"price",
+			"stock",
+			"image",
+		];
+
+		const invalidFields = validateAllowedFields(req, allowedFields);
+		if (invalidFields) {
+			return next(
+				new ErrorHandler(
+					`Invalid fields: ${invalidFields.join(", ")}`,
+					400,
+				),
+			);
+		}
 
 		const newProduct = await Product.create({
 			name,

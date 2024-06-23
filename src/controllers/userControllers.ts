@@ -3,7 +3,7 @@ import {UserModel} from "../models/userModal.js";
 import {NewUserRequestBody} from "../types/types.js";
 import {TryCatch} from "../middlewares/error.js";
 import ErrorHandler from "../utils/utility-class.js";
-import {allowedField} from "../utils/allowedFields.js";
+import {validateAllowedFields} from "../utils/allowedFields.js";
 
 // * handleNewUser -> /api/v1/user/new
 export const handleNewUser = TryCatch(
@@ -12,20 +12,9 @@ export const handleNewUser = TryCatch(
 		res: Response,
 		next: NextFunction,
 	) => {
-		const {name, email, gender, image, dob, _id} = req.body;
-
 		// List fo allowed fields
-		const allowedFields = [
-			"name",
-			"email",
-			"gender",
-			"image",
-			"dob",
-			"_id",
-		];
 
-		// ! Check for any field that are not allowed
-		allowedField(req, res, next, allowedFields);
+		const {name, email, gender, image, dob, _id} = req.body;
 
 		let user = await UserModel.findById(_id);
 
@@ -35,6 +24,26 @@ export const handleNewUser = TryCatch(
 				message: `Welcome back ${name}!`,
 			});
 		}
+
+		const allowedFields = [
+			"name",
+			"email",
+			"gender",
+			"image",
+			"dob",
+			"_id",
+		];
+
+		//  ! Check for any field that are not allowed
+		const invalidFields = validateAllowedFields(req, allowedFields);
+
+		if (invalidFields)
+			return next(
+				new ErrorHandler(
+					`Invalid Fields: ${invalidFields.join(", ")}`,
+					400,
+				),
+			);
 
 		user = await UserModel.create({
 			_id,

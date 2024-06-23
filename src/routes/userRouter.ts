@@ -1,7 +1,12 @@
 import express from "express";
 
 export const userRouter = express.Router();
-import {handleDeleteUser, handleGetAllUsers, handleGetUser, handleNewUser} from "../controllers/userControllers.js";
+import {
+	handleDeleteUser,
+	handleGetAllUsers,
+	handleGetUser,
+	handleNewUser,
+} from "../controllers/userControllers.js";
 import {validateUser} from "../validators/validateUser.js";
 import {runValidation} from "../validators/index.js";
 import {isAdmin} from "../middlewares/auth.js";
