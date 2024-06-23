@@ -9,7 +9,7 @@ export const isAdmin = TryCatch(async (req, res, next) => {
 	if (!id) return next(new ErrorHandler("Please login first", 401));
 
 	const user = await UserModel.findById({_id: id});
-	if (!user) return next(new ErrorHandler("Invalid user", 401));
+	if (!user) return next(new ErrorHandler("Invalid Credential", 401));
 
 	if (user.role !== "admin") {
 		return next(new ErrorHandler("Forbidden! You are not admin", 403));

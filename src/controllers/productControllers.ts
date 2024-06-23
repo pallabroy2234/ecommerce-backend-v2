@@ -7,7 +7,6 @@ import {
 	ProductUpdateRequestBody,
 } from "../types/types.js";
 import ErrorHandler from "../utils/utility-class.js";
-import {unlinkSync} from "fs";
 import {deleteImage} from "../validators/index.js";
 
 // * Create New Product handler ->  /api/v1/product/new
@@ -166,6 +165,32 @@ export const handleUpdateSingleProduct = TryCatch(
 			success: true,
 			message: "Product updated successfully",
 			payload: updatedProduct,
+		});
+	},
+);
+
+// * Delete Single Product handler -> /api/v1/product/:id
+export const handleDeleteProduct = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const {id} = req.params;
+
+		const productExists = await Product.findById({_id: id});
+		if (!productExists)
+			return next(new ErrorHandler("Product not found", 404));
+
+		if (productExists.image) {
+			deleteImage(productExists.image);
+		}
+
+		const deletedProduct = await Product.findByIdAndDelete({_id: id});
+
+		if (!deletedProduct)
+			return next(new ErrorHandler("Error deleting product", 404));
+
+		return res.status(200).json({
+			success: true,
+			message: "Product deleted successfully",
+			payload: deletedProduct,
 		});
 	},
 );

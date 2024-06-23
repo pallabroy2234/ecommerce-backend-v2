@@ -1,5 +1,6 @@
 import express from "express";
 import {
+	handleDeleteProduct,
 	handleGetAllAdminProducts,
 	handleGetAllCategories,
 	handleGetLatestProducts,
@@ -9,6 +10,7 @@ import {
 } from "../controllers/productControllers.js";
 import {singleUpload} from "../middlewares/multer.js";
 import {
+	validateDeleteProduct,
 	validateProduct,
 	validateSingleProduct,
 	validateUpdateProduct,
@@ -45,13 +47,24 @@ productRouter.get(
 	handleGetSingleProduct,
 );
 
-// * Update Single Product Route -> /api/v1/Product/:id
+// * Update Single Product Route -> /api/v1/product/:id
 productRouter.put(
 	"/:id",
+	isAdmin,
 	singleUpload,
 	validateUpdateProduct,
 	runValidation(422),
 	handleUpdateSingleProduct,
+);
+
+// * Delete Single Product Route -> /api/v1/product/:id
+
+productRouter.delete(
+	"/:id",
+	isAdmin,
+	validateDeleteProduct,
+	runValidation(400),
+	handleDeleteProduct,
 );
 
 export default productRouter;

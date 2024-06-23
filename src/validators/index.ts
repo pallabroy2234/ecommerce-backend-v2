@@ -31,7 +31,7 @@ export const deleteImage = (path: string) => {
 	try {
 		if (existsSync(path)) {
 			unlinkSync(path);
-			logger.info("Image deleted successfully");
+			logger.info(`Image deleted successfully from path : ${path}`);
 		} else {
 			logger.warn(`Image not found at path: ${path}`);
 		}

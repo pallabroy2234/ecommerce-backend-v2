@@ -97,6 +97,16 @@ export const validateUpdateProduct = [
 		}),
 ];
 
+// * Delete a single product validation
+
+export const validateDeleteProduct = [
+	param("id")
+		.notEmpty()
+		.withMessage("Product id is required")
+		.isMongoId()
+		.withMessage("Invalid product id"),
+];
+
 // body("image")
 // 	.optional()
 // 	.custom((value, { req }) => {
