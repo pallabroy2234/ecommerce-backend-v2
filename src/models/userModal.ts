@@ -118,7 +118,8 @@ const userSchema = new Schema(
 				validator: (value: string) => {
 					return /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/.test(value);
 				},
-				message: (props: any) => `${props.value} is not a valid email address!`,
+				message: (props: any) =>
+					`${props.value} is not a valid email address!`,
 			},
 		},
 		image: {
@@ -155,5 +156,12 @@ userSchema.virtual("age").get(function () {
 	}
 	return age;
 });
+
+// userSchema.pre("save", function (next) {
+// 	if (!this.isModified("role")) {
+// 		this.role = "user";
+// 	}
+// 	next();
+// });
 
 export const UserModel = mongoose.model<IUser>("User", userSchema);

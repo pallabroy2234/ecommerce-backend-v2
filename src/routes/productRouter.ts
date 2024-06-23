@@ -33,6 +33,8 @@ productRouter.post(
 // * Get latest products Route -> /api/v1/product/latest
 productRouter.get("/latest", handleGetLatestProducts);
 
+// * Get all product route by search -> /api/v1/product/all
+
 // * Get all categories Route -> /api/v1/product/categories
 productRouter.get("/categories", handleGetAllCategories);
 
