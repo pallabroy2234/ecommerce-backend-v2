@@ -23,7 +23,7 @@ const productRouter = express.Router();
 // * Create New Product Route -> /api/v1/product/new
 productRouter.post(
 	"/new",
-	// isAdmin,
+	isAdmin,
 	singleUpload,
 	validateProduct,
 	runValidation(),
