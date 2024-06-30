@@ -31,8 +31,6 @@ const productSchema = new Schema(
 		},
 		price: {
 			type: Number,
-
-			trim: true,
 			validate: {
 				validator: function (value: any) {
 					if (typeof value !== "number" || isNaN(value)) {
@@ -57,7 +55,6 @@ const productSchema = new Schema(
 		},
 		stock: {
 			type: Number,
-			trim: true,
 			validate: {
 				validator: function (value: any) {
 					if (typeof value !== "number" || isNaN(value)) {

@@ -18,6 +18,26 @@ export interface NewProductRequestBody {
 	stock: number;
 }
 
+// * Search Query params for products
+export interface SearchQueryParams {
+	search?: string;
+	price?: number;
+	page?: number;
+	category?: string;
+	sort?: string;
+}
+
+// * Base Query Products Interface
+export interface BaseQuery {
+	name?: {
+		$regex: string | RegExp;
+	};
+	price?: {
+		$lte: number;
+	};
+	category?: string;
+}
+
 // * Controller Types
 
 export type ControllerType = (

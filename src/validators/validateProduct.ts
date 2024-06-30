@@ -1,4 +1,4 @@
-import {body, param} from "express-validator";
+import {body, param, query} from "express-validator";
 
 export const validateProduct = [
 	body("name")
@@ -107,6 +107,19 @@ export const validateDeleteProduct = [
 		.withMessage("Invalid product id"),
 ];
 
+// * Get all product by search query params validation -> only for admin
+export const validateGetAllProducts = [
+	query("search")
+		.optional()
+		.trim()
+		.isString()
+		.withMessage("Search must be a string"),
+	query("price")
+		.optional()
+		.trim()
+		.isNumeric()
+		.withMessage("Price must be a number"),
+];
 // body("image")
 // 	.optional()
 // 	.custom((value, { req }) => {

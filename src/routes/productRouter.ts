@@ -3,6 +3,7 @@ import {
 	handleDeleteProduct,
 	handleGetAllAdminProducts,
 	handleGetAllCategories,
+	handleGetAllProducts,
 	handleGetLatestProducts,
 	handleGetSingleProduct,
 	handleNewProduct,
@@ -11,6 +12,7 @@ import {
 import {singleUpload} from "../middlewares/multer.js";
 import {
 	validateDeleteProduct,
+	validateGetAllProducts,
 	validateProduct,
 	validateSingleProduct,
 	validateUpdateProduct,
@@ -35,10 +37,17 @@ productRouter.get("/latest", handleGetLatestProducts);
 
 // * Get all product route by search -> /api/v1/product/all
 
+productRouter.get(
+	"/all",
+	validateGetAllProducts,
+	runValidation(400),
+	handleGetAllProducts,
+);
+
 // * Get all categories Route -> /api/v1/product/categories
 productRouter.get("/categories", handleGetAllCategories);
 
-// * Get All Products Route -> /api/v1/product/admin-products
+// * Get All Products With Filter Route -> /api/v1/product/admin-products
 productRouter.get("/admin-products", isAdmin, handleGetAllAdminProducts);
 
 // * Get Single Product Route -> /api/v1/product/:id
