@@ -40,7 +40,7 @@ productRouter.get("/latest", handleGetLatestProducts);
 productRouter.get(
 	"/all",
 	validateGetAllProducts,
-	runValidation(400),
+	runValidation(422),
 	handleGetAllProducts,
 );
 
