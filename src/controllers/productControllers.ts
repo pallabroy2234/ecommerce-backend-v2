@@ -13,6 +13,7 @@ import {deleteImage} from "../validators/index.js";
 import {validateAllowedFields} from "../utils/allowedFields.js";
 import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 import {escapeRegex} from "../utils/escapeRegex.js";
+import {nodeCache} from "../utils/nodeCache.js";
 
 // * Create New Product handler ->  /api/v1/product/new
 export const handleNewProduct = TryCatch(
@@ -62,11 +63,20 @@ export const handleNewProduct = TryCatch(
 	},
 );
 
-// * Get latest Product handler -> /api/v1/product/latest
+// * Get latest Product handler -> /api/v1/product/latest || Revalidate on New, Update, Delete products and New Order
 
 export const handleGetLatestProducts = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
-		const products = await Product.find({}).sort({createdAt: -1}).limit(5);
+		// * Get the latest products from the cache
+		let products = [];
+
+		if (nodeCache.has("latestProducts")) {
+			products = JSON.parse(nodeCache.get("latestProducts") as string);
+		} else {
+			products = await Product.find({}).sort({createdAt: -1}).limit(5);
+			// * Set the latest products in the cache
+			nodeCache.set("latestProducts", JSON.stringify(products));
+		}
 
 		return res.status(products.length > 0 ? 200 : 404).json({
 			success: products.length > 0 ? true : false,
@@ -77,10 +87,19 @@ export const handleGetLatestProducts = TryCatch(
 	},
 );
 
-// * Get all Categories handler -> /api/v1/product/categories
+// * Get all Categories handler -> /api/v1/product/categories || Revalidate on New, Update, Delete products and New Order
 export const handleGetAllCategories = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
-		const categories = await Product.distinct("category");
+		//  Get the categories from the cache
+		let categories = [];
+
+		if (nodeCache.has("categories")) {
+			categories = JSON.parse(nodeCache.get("categories") as string);
+		} else {
+			categories = await Product.distinct("category");
+			//  Set the categories in the cache
+			nodeCache.set("categories", JSON.stringify(categories));
+		}
 
 		return res.status(categories.length > 0 ? 200 : 404).json({
 			success: categories.length > 0 ? true : false,
@@ -93,7 +112,7 @@ export const handleGetAllCategories = TryCatch(
 	},
 );
 
-// * Get Admin all Products handler -> /api/v1/product/admin-products
+// * Get Admin all Products handler -> /api/v1/product/admin-products ||
 
 export const handleGetAllAdminProducts = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {

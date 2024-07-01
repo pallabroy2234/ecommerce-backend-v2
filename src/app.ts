@@ -5,9 +5,7 @@ import morgan from "morgan";
 import bodyParser from "body-parser";
 import {errorMiddleWare, notFound} from "./middlewares/error.js";
 import connectDatabase from "./utils/feature.js";
-
 import swaggerDocs from "./utils/swagger.js";
-
 dotenv.config();
 
 // *   Database connection
