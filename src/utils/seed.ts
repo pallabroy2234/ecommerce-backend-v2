@@ -14,7 +14,16 @@ const seedProducts = async (count: number = 10) => {
 		products.push(product);
 	}
 	await Product.create(products);
-	console.log("Products seeded successfully");
+	// console.log("Products seeded successfully");
 };
 
 // seedProducts(100);
+
+// * Function to delete products
+export const deleteProducts = async (count: number = 1) => {
+	const products = await Product.find({}).sort({createdAt: -1}).limit(count);
+	await Product.deleteMany({
+		_id: {$in: products.map((product) => product._id)},
+	});
+	console.log("Products deleted successfully");
+};
