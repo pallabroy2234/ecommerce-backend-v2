@@ -260,12 +260,13 @@ export const handleGetAllProducts = TryCatch(
 		if (price) baseQuery.price = {$lte: Number(price)};
 		if (category) baseQuery.category = category;
 
-		const products = await Product.find(baseQuery)
-			.sort(sort && {price: sort === "asc" ? 1 : -1})
-			.limit(limit)
-			.skip(skip);
-
-		const totalProducts = await Product.countDocuments(baseQuery);
+		const [products, totalProducts] = await Promise.all([
+			Product.find(baseQuery)
+				.sort(sort && {price: sort === "asc" ? 1 : -1})
+				.limit(limit)
+				.skip(skip),
+			Product.countDocuments(baseQuery),
+		]);
 
 		return res.status(products.length > 0 ? 200 : 404).json({
 			success: products.length > 0 ? true : false,
