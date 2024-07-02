@@ -40,6 +40,28 @@ nodeCache.get = <T>(key: string): T | undefined => {
 	return value;
 };
 
+// * Filter the keys that have product-id
+const filterProductKeys = async () => {
+	// Get all keys which store in the cache
+	const allKeys = nodeCache.keys();
+
+	// Get all product id from the database
+	const productId = await Product.find({}).lean().exec();
+	// convert the product id to string
+	const productIds = productId.map((id) => id._id.toString());
+
+	const key = allKeys.filter((key) => {
+		const productKeys = key.startsWith("product-");
+		if (productKeys) {
+			const id = key.split("-").pop();
+			// 	match the product id with the keys and return the id
+			const matched = productIds.find((pId) => pId === id);
+			return matched;
+		}
+	});
+	return key;
+};
+
 // * Node Cache Revalidate / Invalidate Cache
 
 export const invalidateCache = async ({
@@ -52,13 +74,12 @@ export const invalidateCache = async ({
 			const productsKeys: string[] = [
 				"admin-products",
 				"latestProducts",
-				"product",
+				"categories",
 			];
-			const productId = await Product.find({}).select("_id");
-			productId.forEach((id) => {
-				productsKeys.push(`product-${id}`);
-			});
-			nodeCache.del(productsKeys);
+
+			const filter = await filterProductKeys();
+			const keys = [...productsKeys, ...filter];
+			nodeCache.del(keys);
 		}
 		if (order) {
 		}

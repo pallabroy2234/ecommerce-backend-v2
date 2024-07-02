@@ -13,7 +13,7 @@ import {deleteImage} from "../validators/index.js";
 import {validateAllowedFields} from "../utils/allowedFields.js";
 import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 import {escapeRegex} from "../utils/escapeRegex.js";
-import {nodeCache} from "../utils/nodeCache.js";
+import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
 
 // * Create New Product handler ->  /api/v1/product/new
 export const handleNewProduct = TryCatch(
@@ -56,6 +56,7 @@ export const handleNewProduct = TryCatch(
 		});
 
 		// * Invalidate the cache
+		await invalidateCache({product: true});
 
 		return res.status(201).json({
 			success: true,
