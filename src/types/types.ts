@@ -55,3 +55,11 @@ export interface ProductUpdateRequestBody {
 	stock?: number;
 	image?: string;
 }
+
+// * Revalidate / Invalidate Cache type
+
+export type InvalidateCacheProps = {
+	product?: boolean;
+	order?: boolean;
+	admin?: boolean;
+};

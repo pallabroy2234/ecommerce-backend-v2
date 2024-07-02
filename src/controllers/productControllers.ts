@@ -55,6 +55,8 @@ export const handleNewProduct = TryCatch(
 			stock,
 		});
 
+		// * Invalidate the cache
+
 		return res.status(201).json({
 			success: true,
 			message: "Product created successfully",

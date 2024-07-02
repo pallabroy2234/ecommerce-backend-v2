@@ -1,5 +1,7 @@
 import NodeCache from "node-cache";
 import logger from "./logger.js";
+import {InvalidateCacheProps} from "../types/types.js";
+import {Product} from "../models/productModel.js";
 
 export const nodeCache = new NodeCache({
 	stdTTL: 0,
@@ -36,4 +38,33 @@ nodeCache.get = <T>(key: string): T | undefined => {
 		logger.info(`Key: ${key} is retrieved from the cache`);
 	}
 	return value;
+};
+
+// * Node Cache Revalidate / Invalidate Cache
+
+export const invalidateCache = async ({
+	product,
+	order,
+	admin,
+}: InvalidateCacheProps) => {
+	try {
+		if (product) {
+			const productsKeys: string[] = [
+				"admin-products",
+				"latestProducts",
+				"product",
+			];
+			const productId = await Product.find({}).select("_id");
+			productId.forEach((id) => {
+				productsKeys.push(`product-${id}`);
+			});
+			nodeCache.del(productsKeys);
+		}
+		if (order) {
+		}
+		if (admin) {
+		}
+	} catch (error) {
+		logger.error(`Error occurred in the cache: ${error}`);
+	}
 };
