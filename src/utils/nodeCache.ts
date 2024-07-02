@@ -11,7 +11,7 @@ nodeCache.on("set", (key) => {
 	logger.info(`Key: ${key} is set in the cache`);
 });
 
-nodeCache.on("expired", (key, value) => {
+nodeCache.on("expired", (key) => {
 	logger.info(`Key: ${key} is expired and removed from the cache`);
 });
 
@@ -26,3 +26,14 @@ nodeCache.on("flush", () => {
 nodeCache.on("error", (error) => {
 	logger.error(`Error occurred in the cache: ${error}`);
 });
+
+// wrap the get method to add logging
+
+const originalGet = nodeCache.get.bind(nodeCache);
+nodeCache.get = <T>(key: string): T | undefined => {
+	const value = originalGet<T>(key);
+	if (value !== undefined) {
+		logger.info(`Key: ${key} is retrieved from the cache`);
+	}
+	return value;
+};

@@ -112,11 +112,20 @@ export const handleGetAllCategories = TryCatch(
 	},
 );
 
-// * Get Admin all Products handler -> /api/v1/product/admin-products ||
+// * Get Admin all Products handler -> /api/v1/product/admin-products || Revalidate on New, Update, Delete products and New Order
 
 export const handleGetAllAdminProducts = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
-		const products = await Product.find({});
+		let products = [];
+
+		// Get the products from the cache or database
+		if (nodeCache.has("admin-products")) {
+			products = JSON.parse(nodeCache.get("admin-products") as string);
+		} else {
+			products = await Product.find({}).sort({createdAt: -1});
+			// Set the products in the cache
+			nodeCache.set("admin-products", JSON.stringify(products));
+		}
 
 		return res.status(products.length > 0 ? 200 : 404).json({
 			success: products.length > 0 ? true : false,
@@ -127,13 +136,22 @@ export const handleGetAllAdminProducts = TryCatch(
 	},
 );
 
-// * Get Single Product handler -> /api/v1/product/:id
+// * Get Single Product handler -> /api/v1/product/:id || Revalidate on New, Update, Delete products and New Order
 
 export const handleGetSingleProduct = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
 		const {id} = req.params;
 
-		const product = await Product.findById({_id: id});
+		let product;
+
+		// Get the product from the cache or database
+		if (nodeCache.has(`product-${id}`)) {
+			product = JSON.parse(nodeCache.get(`product-${id}`) as string);
+		} else {
+			product = await Product.findById({_id: id});
+			// Set the product in the cache
+			nodeCache.set(`product-${id}`, JSON.stringify(product));
+		}
 
 		return res.status(product ? 200 : 404).json({
 			success: product ? true : false,
