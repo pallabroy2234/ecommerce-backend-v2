@@ -63,3 +63,34 @@ export type InvalidateCacheProps = {
 	order?: boolean;
 	admin?: boolean;
 };
+
+//  Order Item Type
+export type OrderItemType = {
+	productId: string;
+	name: string;
+	image: string;
+	price: number;
+	quantity: number;
+};
+
+// Shipping Info Type
+
+export type ShippingInfoType = {
+	address: string;
+	county: string;
+	city: string;
+	division: string;
+	postCode: number;
+};
+
+// * New Order Request Body
+export interface NewOrderRequestBody {
+	shippingInfo: ShippingInfoType;
+	user: String;
+	subtotal: number;
+	tax: number;
+	shippingCharges: number;
+	discount: number;
+	total: number;
+	orderItems: OrderItemType[];
+}

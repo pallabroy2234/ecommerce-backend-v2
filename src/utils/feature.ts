@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import logger from "./logger.js";
-import {tr} from "@faker-js/faker";
 
 dotenv.config();
 
