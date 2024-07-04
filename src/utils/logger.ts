@@ -15,7 +15,11 @@ const logFormat = printf(({level, message, timestamp, stack}) => {
 
 const logger = createLogger({
 	level: "info",
-	format: combine(timestamp({format: "YYYY-MM-DD HH:mm:ss"}), errors({stack: true}), logFormat),
+	format: combine(
+		timestamp({format: "YYYY-MM-DD HH:mm:ss"}),
+		errors({stack: true}),
+		logFormat,
+	),
 	transports: [
 		// * This transport for duplicate logs in console so commented
 		// new transports.Console({
@@ -47,12 +51,19 @@ const logger = createLogger({
 	],
 });
 
-if (process.env.MODE !== "production") {
-	logger.add(
-		new transports.Console({
-			format: combine(colorize(), logFormat),
-		}),
-	);
-}
+logger.add(
+	new transports.Console({
+		format: combine(colorize(), logFormat),
+	}),
+);
+
+// * This is only logger for development mode to show logs in console
+// if (process.env.MODE !== "production") {
+// 	logger.add(
+// 		new transports.Console({
+// 			format: combine(colorize(), logFormat),
+// 		}),
+// 	);
+// }
 
 export default logger;
