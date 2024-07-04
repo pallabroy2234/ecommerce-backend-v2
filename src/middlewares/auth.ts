@@ -1,7 +1,7 @@
 //  * Middleware to make sure only admin is allowed
 import {TryCatch} from "./error.js";
 import ErrorHandler from "../utils/utility-class.js";
-import {UserModel} from "../models/userModal.js";
+import {UserModel} from "../models/userModel.js";
 
 export const isAdmin = TryCatch(async (req, res, next) => {
 	const {id} = req.query;
