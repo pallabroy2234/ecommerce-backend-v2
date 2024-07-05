@@ -45,6 +45,12 @@ const orderSchema = new Schema(
 			required: [true, "Tax is required"],
 			default: 0.0,
 		},
+		shippingCharges: {
+			type: Number,
+			trim: true,
+			required: [true, "Shipping Charges is required"],
+			default: 0.0,
+		},
 		discount: {
 			type: Number,
 			required: [true, "Discount is required"],

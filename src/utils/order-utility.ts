@@ -2,6 +2,7 @@ import {Product} from "../models/productModel.js";
 import ErrorHandler from "./utility-class.js";
 import {Request} from "express";
 import {ShippingInfoType} from "../types/types.js";
+import logger from "./logger.js";
 
 // * Order Processing
 export const orderProcessing = async (orderItems: any) => {
@@ -19,7 +20,7 @@ export const orderProcessing = async (orderItems: any) => {
 			if (product.stock < order.quantity) {
 				return new ErrorHandler(
 					`Product out of stock: ${product.name}`,
-					404,
+					400,
 				);
 			}
 
@@ -36,7 +37,8 @@ export const orderProcessing = async (orderItems: any) => {
 		}
 		return processOrderItems;
 	} catch (e: any) {
-		return new ErrorHandler(`Error reducing stock: ${e.message}`, 500);
+		logger.error(`Invalid order processing: ${e.message}`);
+		return new ErrorHandler(`Invalid order processing: ${e.message}`, 500);
 	}
 };
 
@@ -76,7 +78,6 @@ export const validateOrderItemsFields = (req: Request) => {
 
 		// 	Check for keys that are not allowed
 
-		console.log(Object.keys(item));
 		Object.keys(item).forEach((key) => {
 			if (!allowedKeys.has(key)) {
 				invalid.add(key);

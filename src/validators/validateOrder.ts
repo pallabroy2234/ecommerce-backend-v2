@@ -13,12 +13,20 @@ export const validateNewOrder = [
 		.isFloat({min: 0.0})
 		.withMessage("Invalid subtotal"),
 	body("tax")
-		.optional()
+		.notEmpty()
+		.withMessage("Tax is required")
 		.isFloat({min: 0.0})
 		.withMessage("Invalid tex")
 		.default(0.0),
+	body("shippingCharges")
+		.notEmpty()
+		.withMessage("Shipping Charges is required")
+		.isFloat({min: 0.0})
+		.withMessage("Invalid shipping charges")
+		.default(0.0),
 	body("discount")
-		.optional()
+		.notEmpty()
+		.withMessage("Discount is required")
 		.isFloat({min: 0.0, max: 100.0})
 		.withMessage("Discount must be between 0 and 100")
 		.default(0.0),
@@ -33,11 +41,31 @@ export const validateNewOrder = [
 		.isIn(["processing", "shipped", "delivered", "cancelled"])
 		.withMessage("Invalid status")
 		.default("processing"),
+
+	// * Validate shipping info
 	body("shippingInfo")
 		.notEmpty()
 		.withMessage("Shipping Info is required")
 		.isObject()
-		.withMessage("Invalid shipping info"),
+		.withMessage("Invalid shipping info")
+		.custom((value) => {
+			const requiredFields = [
+				"address",
+				"country",
+				"city",
+				"division",
+				"postCode",
+			];
+			const missingFields = requiredFields.filter(
+				(field) => !value.hasOwnProperty(field),
+			);
+			if (missingFields.length > 0) {
+				throw new Error(
+					`Missing Shipping info fields: ${missingFields.join(", ")}`,
+				);
+			}
+			return true;
+		}),
 	body("shippingInfo.address")
 		.notEmpty()
 		.withMessage("Please enter your shipping address")
@@ -69,36 +97,25 @@ export const validateNewOrder = [
 		.withMessage("Invalid post code")
 		.isLength({min: 4, max: 6})
 		.withMessage("Invalid post code"),
+
+	// * Validate order items
 	body("orderItems")
+		.notEmpty()
+		.withMessage("Order items are required")
 		.isArray({min: 1})
-		.withMessage("Order items are required"),
+		.withMessage("Invalid order items"),
 	body("orderItems.*.productId")
 		.notEmpty()
 		.withMessage("Product id is required")
 		.isMongoId()
 		.withMessage("Invalid product id"),
-	body("orderItems.*.name")
-		.trim()
-		.notEmpty()
-		.withMessage("Please provide the product name")
-		.isString()
-		.isLength({min: 3})
-		.withMessage("Name must be at least 3 characters"),
 	body("orderItems.*.quantity")
 		.notEmpty()
 		.withMessage("Quantity is required")
 		.isInt({min: 1})
-		.withMessage("Quantity must be at least 1"),
-	body("orderItems.*.price")
-		.notEmpty()
-		.withMessage("Price is required")
-		.isFloat({min: 0.0})
-		.withMessage("Price must be a positive number"),
-	body("orderItems.*.image")
-		.notEmpty()
-		.withMessage("Image is required")
-		.isString()
-		.withMessage("Invalid image URL"),
+		.withMessage("Quantity must be at least 1")
+		.isNumeric()
+		.withMessage("Invalid quantity"),
 ];
 
 // body("shippingInfo")

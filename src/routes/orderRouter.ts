@@ -6,6 +6,6 @@ import {runValidation} from "../validators/index.js";
 const orderRouter = express.Router();
 
 //  * New Order Route -> /api/v1/order/new
-orderRouter.post("/new", handleNewOrder);
+orderRouter.post("/new", validateNewOrder, runValidation(422), handleNewOrder);
 
 export default orderRouter;

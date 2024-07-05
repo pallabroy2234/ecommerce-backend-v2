@@ -46,22 +46,26 @@ export const handleNewOrder = TryCatch(
 
 		//  Validate orderItems fields
 		const validateOrderField = validateOrderItemsFields(req);
+		// Check if there is an error
 		if (validateOrderField instanceof Error) {
 			return next(validateOrderField);
 		}
 		// Validate shippingInfo fields
 		const shippingInfoFields = validateShippingInfoFields(req);
+		// Check if there is an error
 		if (shippingInfoFields instanceof Error) {
 			return next(shippingInfoFields);
 		}
 
+		// Process order or rearrange order items
 		const order = await orderProcessing(req.body.orderItems);
 
 		// Check if there is an error
 		if (order instanceof Error) {
 			return next(order);
 		}
-		// Create new order
+
+		// Create order
 		const createOrder = await Order.create({
 			...req.body,
 			orderItems: order,
