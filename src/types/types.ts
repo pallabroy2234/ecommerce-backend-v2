@@ -67,9 +67,6 @@ export type InvalidateCacheProps = {
 //  Order Item Type
 export type OrderItemType = {
 	productId: string;
-	name: string;
-	image: string;
-	price: number;
 	quantity: number;
 };
 
@@ -77,7 +74,7 @@ export type OrderItemType = {
 
 export type ShippingInfoType = {
 	address: string;
-	county: string;
+	country: string;
 	city: string;
 	division: string;
 	postCode: number;
@@ -92,5 +89,6 @@ export interface NewOrderRequestBody {
 	shippingCharges: number;
 	discount: number;
 	total: number;
+	status: string;
 	orderItems: OrderItemType[];
 }

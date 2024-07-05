@@ -57,34 +57,39 @@ const orderSchema = new Schema(
 		},
 		status: {
 			type: String,
-			enum: ["Processing", "Shipped", "Delivered", "Cancelled"],
-			default: "Processing",
+			enum: ["processing", "shipped", "delivered", "cancelled"],
+			default: "processing",
+			toLowerCase: true,
 		},
 		shippingInfo: {
 			address: {
 				type: String,
-				trim: true,
 				required: [true, "Please enter your shipping address"],
+				trim: true,
+				lowercase: true,
 			},
 			country: {
 				type: String,
-				trim: true,
 				required: [true, "Please enter your country"],
+				trim: true,
+				lowercase: true,
 			},
 			city: {
 				type: String,
-				trim: true,
 				required: [true, "Please enter your city"],
+				trim: true,
+				lowercase: true,
 			},
 			division: {
 				type: String,
-				trim: true,
 				required: [true, "Please enter your division"],
+				trim: true,
+				lowercase: true,
 			},
 			postCode: {
 				type: Number,
-				trim: true,
 				required: [true, "Please enter your post code"],
+				trim: true,
 			},
 		},
 		orderItems: [
