@@ -1,6 +1,6 @@
 import {TryCatch} from "../middlewares/error.js";
 import {Request, Response, NextFunction} from "express";
-import {NewOrderRequestBody, ShippingInfoType} from "../types/types.js";
+import {NewOrderRequestBody} from "../types/types.js";
 import {Order} from "../models/orderModel.js";
 import {
 	orderProcessing,
