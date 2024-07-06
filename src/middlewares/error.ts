@@ -63,6 +63,8 @@ export const errorMiddleWare = (
 		return res.status(err.statusCode).json({
 			success: false,
 			message: err.message,
+			// * Uncomment the line below to include the payload in the response
+			// payload: err.payload,
 		});
 	}
 

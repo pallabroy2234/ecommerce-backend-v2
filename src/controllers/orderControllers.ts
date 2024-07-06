@@ -61,7 +61,7 @@ export const handleNewOrder = TryCatch(
 		const order = await orderProcessing(req.body.orderItems);
 
 		// Check if there is an error
-		if (order instanceof Error) {
+		if (order instanceof ErrorHandler) {
 			return next(order);
 		}
 
