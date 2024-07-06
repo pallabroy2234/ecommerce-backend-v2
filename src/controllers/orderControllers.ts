@@ -80,7 +80,3 @@ export const handleNewOrder = TryCatch(
 		});
 	},
 );
-
-export const handle = () => {
-	console.log("pallab");
-};
