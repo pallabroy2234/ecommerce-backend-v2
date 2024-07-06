@@ -8,25 +8,50 @@ import logger from "./logger.js";
 export const orderProcessing = async (orderItems: any) => {
 	try {
 		let processOrderItems = [];
-		for (let i = 0; i < orderItems.length; i++) {
-			const order = orderItems[i];
-			const product = await Product.findById({_id: order.productId});
+		let allOrderProductId = [];
+
+		// * Collect all product IDs to check for duplicates
+		for (let order of orderItems) {
+			allOrderProductId.push(order.productId);
+		}
+
+		// Check for duplicates
+		const duplicates = allOrderProductId.filter(
+			(id, index, self) => self.indexOf(id) !== index,
+		);
+
+		if (duplicates.length > 0) {
+			const duplicateNames = [];
+			for (let id of duplicates) {
+				const product = await Product.findById({_id: id}).select(
+					"name",
+				);
+
+				if (product) {
+					duplicateNames.push(product.name);
+				}
+			}
+			return new ErrorHandler(
+				`Order contains duplicate product(s): ${duplicateNames.join(", ")}`,
+				400,
+			);
+		}
+
+		// Process each order item since no duplicates were found
+		for (let order of orderItems) {
+			const product = await Product.findById({
+				_id: order.productId,
+			}).select("name image price stock");
+
 			if (!product) {
 				return new ErrorHandler(
 					`Product not found with id: ${order.productId}`,
 					404,
 				);
 			}
-			if (product.stock < order.quantity) {
-				return new ErrorHandler(
-					`Product out of stock: ${product.name}`,
-					400,
-				);
-			}
 
 			product.stock = product.stock - order.quantity;
 			await product.save();
-
 			processOrderItems.push({
 				productId: order.productId,
 				name: product.name,
@@ -35,6 +60,7 @@ export const orderProcessing = async (orderItems: any) => {
 				quantity: order.quantity,
 			});
 		}
+
 		return processOrderItems;
 	} catch (e: any) {
 		logger.error(`Invalid order processing: ${e.message}`);

@@ -7,10 +7,11 @@ import {
 	validateOrderItemsFields,
 	validateShippingInfoFields,
 } from "../utils/order-utility.js";
-import {invalidateCache} from "../utils/nodeCache.js";
+import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
 import {validateAllowedFields} from "../utils/allowedFields.js";
 import ErrorHandler from "../utils/utility-class.js";
 
+// * New Order handler -> /api/v1/order/new
 export const handleNewOrder = TryCatch(
 	async (
 		req: Request<{}, {}, NewOrderRequestBody>,
@@ -77,6 +78,32 @@ export const handleNewOrder = TryCatch(
 			success: true,
 			message: "Order placed successfully",
 			payload: createOrder,
+		});
+	},
+);
+
+// * Get my orders handler -> /api/v1/orders/myOrders
+
+export const handlerMyOrders = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const {id} = req.query;
+
+		let orders = [];
+
+		const o = await Order.find({user: id}).sort({createdAt: -1});
+
+		if (nodeCache.has(`my-orders-${id}`)) {
+			orders = JSON.parse(nodeCache.get(`my-orders-${id}`) as string);
+		} else {
+			orders = await Order.find({user: id}).sort({createdAt: -1});
+			// Cache the orders
+			nodeCache.set(`my-orders-${id}`, JSON.stringify(orders));
+		}
+
+		return res.status(200).json({
+			success: true,
+			message: "My orders fetched successfully",
+			payload: orders,
 		});
 	},
 );
