@@ -100,9 +100,9 @@ export const handlerMyOrders = TryCatch(
 			nodeCache.set(`my-orders-${id}`, JSON.stringify(orders));
 		}
 
-		return res.status(200).json({
-			success: true,
-			message: "My orders fetched successfully",
+		return res.status(orders.length > 0 ? 200 : 404).json({
+			success: orders.length > 0,
+			message: orders.length > 0 ? "My orders" : "No orders found",
 			payload: orders,
 		});
 	},
