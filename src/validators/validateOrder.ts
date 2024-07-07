@@ -1,5 +1,6 @@
-import {body} from "express-validator";
+import {body, query} from "express-validator";
 
+// * validate new order Request body -> /api/v1/order/new
 export const validateNewOrder = [
 	body("user")
 		.trim()
@@ -116,6 +117,17 @@ export const validateNewOrder = [
 		.withMessage("Quantity must be at least 1")
 		.isNumeric()
 		.withMessage("Invalid quantity"),
+];
+
+// * validate Get my orders Request body -> /api/v1/orders/myOrders
+
+export const validateMyOrders = [
+	query("id")
+		.trim()
+		.notEmpty()
+		.withMessage("User Id is required")
+		.isUUID(4)
+		.withMessage("Invalid user id"),
 ];
 
 // body("shippingInfo")

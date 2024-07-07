@@ -10,6 +10,7 @@ import {
 import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
 import {validateAllowedFields} from "../utils/allowedFields.js";
 import ErrorHandler from "../utils/utility-class.js";
+import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 
 // * New Order handler -> /api/v1/order/new
 export const handleNewOrder = TryCatch(
@@ -87,6 +88,20 @@ export const handleNewOrder = TryCatch(
 export const handlerMyOrders = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
 		const {id} = req.query;
+
+		const allowedQueryParams: string[] = ["id"];
+		const invalidQuery: string[] | undefined = validateAllowedQueryParams(
+			req,
+			allowedQueryParams,
+		);
+		if (invalidQuery) {
+			return next(
+				new ErrorHandler(
+					`Invalid query params: ${invalidQuery.join(", ")}`,
+					400,
+				),
+			);
+		}
 
 		let orders = [];
 
