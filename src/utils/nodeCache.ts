@@ -82,6 +82,9 @@ export const invalidateCache = async ({
 			nodeCache.del(keys);
 		}
 		if (order) {
+			const orderKeys: string[] = ["all-admin-orders"];
+
+			nodeCache.del(orderKeys);
 		}
 		if (admin) {
 		}

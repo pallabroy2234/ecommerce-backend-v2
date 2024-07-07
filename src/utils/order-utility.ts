@@ -50,7 +50,12 @@ export const orderProcessing = async (orderItems: any) => {
 				);
 			}
 
-			product.stock = product.stock - order.quantity;
+			if (product.stock < order.quantity) {
+				return new ErrorHandler(
+					`Product : ${product.name} is out of stock`,
+					400,
+				);
+			}
 			await product.save();
 			processOrderItems.push({
 				productId: order.productId,

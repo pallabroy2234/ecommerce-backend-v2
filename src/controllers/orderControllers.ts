@@ -122,3 +122,26 @@ export const handlerMyOrders = TryCatch(
 		});
 	},
 );
+
+// * Get all orders handler -> /api/v1/orders/all
+
+export const handleGetAllOrders = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		let orders = [];
+		if (nodeCache.has("all-admin-orders")) {
+			orders = JSON.parse(nodeCache.get("all-admin-orders") as string);
+		} else {
+			orders = await Order.find({})
+				.sort({createdAt: -1})
+				.populate("user", "name");
+
+			// nodeCache.set("all-admin-orders", JSON.stringify());
+		}
+
+		return res.status(orders.length > 0 ? 200 : 404).json({
+			success: orders.length > 0,
+			message: orders.length > 0 ? "Fet all orders" : "No orders found",
+			payload: orders,
+		});
+	},
+);
