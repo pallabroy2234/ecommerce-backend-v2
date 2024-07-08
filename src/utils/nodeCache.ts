@@ -50,12 +50,15 @@ const filterProductKeys = async () => {
 	// convert the product id to string
 	const productIds = productId.map((id) => id._id.toString());
 
-	const key = allKeys.filter((key) => {
+	const key: string[] | undefined = allKeys.filter((key) => {
 		const productKeys = key.startsWith("product-");
 		if (productKeys) {
 			const id = key.split("-").pop();
+
 			// 	match the product id with the keys and return the id
-			const matched = productIds.find((pId) => pId === id);
+			const matched: string | undefined = productIds.find(
+				(pId) => pId === id,
+			);
 			return matched;
 		}
 	});
