@@ -206,3 +206,24 @@ export const handleProcessOrder = TryCatch(
 		});
 	},
 );
+
+// * Delete Order handler -> /api/v1/order/:id
+
+export const handleDeleteOrder = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const {id} = req.params;
+
+		const deleteOrder = await Order.findByIdAndDelete(id);
+
+		if (!deleteOrder) {
+			return next(new ErrorHandler("Order not found", 404));
+		}
+
+		await invalidateCache({product: false, order: true, admin: true});
+
+		return res.status(200).json({
+			success: true,
+			message: "Order deleted successfully",
+		});
+	},
+);

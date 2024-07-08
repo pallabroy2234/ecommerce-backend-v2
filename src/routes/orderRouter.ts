@@ -1,5 +1,6 @@
 import express from "express";
 import {
+	handleDeleteOrder,
 	handleGetAllOrders,
 	handleGetOrderDetails,
 	handleNewOrder,
@@ -7,6 +8,7 @@ import {
 	handlerMyOrders,
 } from "../controllers/orderControllers.js";
 import {
+	validateDeleteOrder,
 	validateMyOrders,
 	validateNewOrder,
 	validateOrderDetails,
@@ -50,6 +52,15 @@ orderRouter.put(
 	runValidation(422),
 	isAdmin,
 	handleProcessOrder,
+);
+
+// * Delete Order route -> /api/v1/order/:id
+orderRouter.delete(
+	"/:id",
+	validateDeleteOrder,
+	runValidation(422),
+	isAdmin,
+	handleDeleteOrder,
 );
 
 export default orderRouter;
