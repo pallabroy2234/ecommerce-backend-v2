@@ -1,4 +1,4 @@
-import {body, query} from "express-validator";
+import {body, param, query} from "express-validator";
 
 // * validate new order Request body -> /api/v1/order/new
 export const validateNewOrder = [
@@ -119,15 +119,24 @@ export const validateNewOrder = [
 		.withMessage("Invalid quantity"),
 ];
 
-// * validate Get my orders Request body -> /api/v1/orders/myOrders
+// * validate Get my orders Request Query -> /api/v1/order/myOrders
 
 export const validateMyOrders = [
 	query("id")
-		.trim()
 		.notEmpty()
 		.withMessage("User Id is required")
 		.isUUID(4)
 		.withMessage("Invalid user id"),
+];
+
+//  * validate Get order Details Request Params -> /api/v1/order/:id
+
+export const validateOrderDetails = [
+	param("id")
+		.notEmpty()
+		.withMessage("Order Id is required")
+		.isMongoId()
+		.withMessage("Invalid Id"),
 ];
 
 // body("shippingInfo")

@@ -83,7 +83,7 @@ export const handleNewOrder = TryCatch(
 	},
 );
 
-// * Get my orders handler -> /api/v1/orders/myOrders
+// * Get my orders handler -> /api/v1/order/myOrders
 
 export const handlerMyOrders = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
@@ -121,7 +121,7 @@ export const handlerMyOrders = TryCatch(
 	},
 );
 
-// * Get all orders handler -> /api/v1/orders/all
+// * Get all orders handler -> /api/v1/order/all
 
 export const handleGetAllOrders = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
@@ -140,6 +140,32 @@ export const handleGetAllOrders = TryCatch(
 			success: orders.length > 0,
 			message: orders.length > 0 ? "Fet all orders" : "No orders found",
 			payload: orders,
+		});
+	},
+);
+
+// * Get Order details handler -> /api/v1/order/:id
+
+export const handleGetOrderDetails = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const {id} = req.params;
+
+		console.log(id);
+		const key: string = `order-${id}`;
+		let order;
+
+		if (nodeCache.has(key)) {
+			order = JSON.parse(nodeCache.get(key) as string);
+		} else {
+			order = await Order.findById(id).populate("user", "name");
+			// 	cache the order
+			nodeCache.set(key, JSON.stringify(order));
+		}
+
+		return res.status(order ? 200 : 404).json({
+			success: !!order,
+			message: order ? "Fetch order details" : "Order not found",
+			payload: order ? order : {},
 		});
 	},
 );
