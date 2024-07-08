@@ -169,3 +169,40 @@ export const handleGetOrderDetails = TryCatch(
 		});
 	},
 );
+
+// * Process Order handler -> /api/v1/order/:id
+export const handleProcessOrder = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const {id} = req.params;
+
+		const order = await Order.findById(id);
+
+		if (!order) {
+			return next(new ErrorHandler("Order not found", 404));
+		}
+
+		// 	change order status
+
+		switch (order.status) {
+			case "processing":
+				order.status = "shipped";
+				break;
+			case "shipped":
+				order.status = "delivered";
+				break;
+			default:
+				order.status = "delivered";
+				break;
+		}
+
+		await order.save();
+
+		// 	 Invalidate cache
+		await invalidateCache({product: false, order: true, admin: true});
+
+		return res.status(200).json({
+			success: true,
+			message: "Order processed successfully",
+		});
+	},
+);

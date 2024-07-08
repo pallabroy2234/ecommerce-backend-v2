@@ -139,6 +139,17 @@ export const validateOrderDetails = [
 		.withMessage("Invalid Id"),
 ];
 
+// * validate Process Order Request -> /api/v1/order/:id
+
+export const validateProcessOrder = [
+	query("id").optional().isUUID(4).withMessage("Invalid id"),
+	param("id")
+		.notEmpty()
+		.withMessage("Order Id is required")
+		.isMongoId()
+		.withMessage("Invalid Id"),
+];
+
 // body("shippingInfo")
 // 	.notEmpty()
 // 	.withMessage("Shipping Info is required")

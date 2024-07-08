@@ -3,12 +3,14 @@ import {
 	handleGetAllOrders,
 	handleGetOrderDetails,
 	handleNewOrder,
+	handleProcessOrder,
 	handlerMyOrders,
 } from "../controllers/orderControllers.js";
 import {
 	validateMyOrders,
 	validateNewOrder,
 	validateOrderDetails,
+	validateProcessOrder,
 } from "../validators/validateOrder.js";
 import {runValidation} from "../validators/index.js";
 import {isAdmin} from "../middlewares/auth.js";
@@ -37,6 +39,17 @@ orderRouter.get(
 	validateOrderDetails,
 	runValidation(422),
 	handleGetOrderDetails,
+);
+
+// * Process Order Route -> /api/v1/order/:id
+
+orderRouter.put(
+	"/:id",
+
+	validateProcessOrder,
+	runValidation(422),
+	isAdmin,
+	handleProcessOrder,
 );
 
 export default orderRouter;
