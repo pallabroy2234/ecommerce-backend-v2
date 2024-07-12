@@ -62,6 +62,7 @@ export type InvalidateCacheProps = {
 	product?: boolean;
 	order?: boolean;
 	admin?: boolean;
+	userId?:string;
 };
 
 //  Order Item Type

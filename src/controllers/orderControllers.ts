@@ -105,12 +105,12 @@ export const handlerMyOrders = TryCatch(
 
 		let orders = [];
 
-		if (nodeCache.has(`my-orders-${id}`)) {
-			orders = JSON.parse(nodeCache.get(`my-orders-${id}`) as string);
+		if (nodeCache.has(`my_orders_${id}`)) {
+			orders = JSON.parse(nodeCache.get(`my_orders_${id}`) as string);
 		} else {
 			orders = await Order.find({user: id}).sort({createdAt: -1});
 			// Cache the orders
-			nodeCache.set(`my-orders-${id}`, JSON.stringify(orders));
+			nodeCache.set(`my_orders_${id}`, JSON.stringify(orders));
 		}
 
 		return res.status(orders.length > 0 ? 200 : 404).json({
@@ -150,7 +150,7 @@ export const handleGetOrderDetails = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
 		const {id} = req.params;
 
-		console.log(id);
+
 		const key: string = `order-${id}`;
 		let order;
 
