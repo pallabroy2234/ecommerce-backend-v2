@@ -1,14 +1,35 @@
 import multer from "multer";
 import {Request} from "express";
 import {extname, join} from "path";
-import {readdirSync, unlinkSync} from "fs";
+import {mkdirSync, readdirSync, unlinkSync} from "fs";
 import logger from "../utils/logger.js";
 import {v4 as uuid} from "uuid";
 import ErrorHandler from "../utils/utility-class.js";
+import {existsSync, mkdir} from "node:fs";
+import {error} from "winston";
 
 const ALLOWED_FILE_TYPES = ["jpg", "jpeg", "png"];
-const UPLOAD_FOLDER = "./public/uploads";
+const PUBLIC = "public";
+const UPLOAD_FOLDER = (PUBLIC + "/uploads").toString();
 const MAX_FILE_SIZE = 1024 * 1024 * 2; // 2 MB
+
+function ensureDirectoryExists(directory: any) {
+	if (!existsSync(directory)) {
+		try {
+			mkdirSync(directory, {recursive: true});
+			logger.info(`${directory} folder created successfully`);
+		} catch (err: any) {
+			logger.error(`Error creating ${directory} folder`, err);
+			return new ErrorHandler(`Error creating ${directory} folder`, 500);
+		}
+	} else {
+		logger.info(`${directory} folder already exists`);
+	}
+}
+
+// Ensure that public and uploads folders exist
+ensureDirectoryExists(PUBLIC);
+ensureDirectoryExists(UPLOAD_FOLDER);
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
