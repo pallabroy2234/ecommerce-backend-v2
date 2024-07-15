@@ -5,12 +5,11 @@ import {mkdirSync, readdirSync, unlinkSync} from "fs";
 import logger from "../utils/logger.js";
 import {v4 as uuid} from "uuid";
 import ErrorHandler from "../utils/utility-class.js";
-import {existsSync, mkdir} from "node:fs";
-import {error} from "winston";
+import {existsSync} from "node:fs";
 
 const ALLOWED_FILE_TYPES = ["jpg", "jpeg", "png"];
 const PUBLIC = "public";
-const UPLOAD_FOLDER = (PUBLIC + "/uploads").toString();
+const UPLOAD_FOLDER = `${PUBLIC}/uploads`;
 const MAX_FILE_SIZE = 1024 * 1024 * 2; // 2 MB
 
 function ensureDirectoryExists(directory: any) {
@@ -22,8 +21,6 @@ function ensureDirectoryExists(directory: any) {
 			logger.error(`Error creating ${directory} folder`, err);
 			return new ErrorHandler(`Error creating ${directory} folder`, 500);
 		}
-	} else {
-		logger.info(`${directory} folder already exists`);
 	}
 }
 
