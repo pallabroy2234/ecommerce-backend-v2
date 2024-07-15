@@ -8,7 +8,7 @@ import {UserModel} from "../models/userModel.js";
 export const nodeCache = new NodeCache({
 	stdTTL: 0,
 	checkperiod: 120,
-	useClones: false
+	useClones: false,
 });
 
 nodeCache.on("set", (key) => {
@@ -59,7 +59,7 @@ const filterProductKeys = async () => {
 
 			// 	match the product id with the keys and return the id
 			const matched: string | undefined = productIds.find(
-				(pId) => pId === id
+				(pId) => pId === id,
 			);
 			return matched;
 		}
@@ -73,13 +73,13 @@ export const filterOrderKeys = async () => {
 	// Get all keys
 	const allKeys = nodeCache.keys();
 
-// 	get all order id from dataBase
+	// 	get all order id from dataBase
 	const orderId = await Order.find({}).select("_id").lean().exec();
 
-// 	convert to Object id to string for iteration
+	// 	convert to Object id to string for iteration
 	const orderIds: string[] = orderId.map((id) => id._id.toString());
 
-// 	filter the keys
+	// 	filter the keys
 	const keys: string[] | undefined = allKeys.filter((key) => {
 		const startWithOrder = key.startsWith("order-");
 		if (startWithOrder) {
@@ -93,7 +93,6 @@ export const filterOrderKeys = async () => {
 	// convert string for iteration
 	const userIds: string[] = userId.map((id) => id._id.toString());
 
-
 	// filter the keys
 	const myOrdersKeys: string[] | undefined = allKeys.filter((key: string) => {
 		const startWithMyOrders = key.startsWith("my_orders_");
@@ -102,27 +101,25 @@ export const filterOrderKeys = async () => {
 			const id: string | undefined = key.split("_").pop();
 
 			return userIds.find((uId) => uId === id) || undefined;
-
 		}
 	});
 
 	return [...keys, ...myOrdersKeys];
 };
 
-
 // * Node Cache Revalidate / Invalidate Cache
 
 export const invalidateCache = async ({
-										  product,
-										  order,
-										  admin
-									  }: InvalidateCacheProps) => {
+	product,
+	order,
+	admin,
+}: InvalidateCacheProps) => {
 	try {
 		if (product) {
 			const productsKeys: string[] = [
 				"admin-products",
 				"latestProducts",
-				"categories"
+				"categories",
 			];
 
 			const filter = await filterProductKeys();
