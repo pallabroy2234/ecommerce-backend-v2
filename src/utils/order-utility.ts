@@ -56,6 +56,8 @@ export const orderProcessing = async (orderItems: any) => {
 					400,
 				);
 			}
+			// Reduce the stock
+			product.stock = product.stock - order.quantity;
 			await product.save();
 			processOrderItems.push({
 				productId: order.productId,

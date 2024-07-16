@@ -150,7 +150,6 @@ export const handleGetOrderDetails = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
 		const {id} = req.params;
 
-
 		const key: string = `order-${id}`;
 		let order;
 
@@ -219,7 +218,12 @@ export const handleDeleteOrder = TryCatch(
 			return next(new ErrorHandler("Order not found", 404));
 		}
 
-		await invalidateCache({product: false, order: true, admin: true});
+		await invalidateCache({
+			product: true,
+			order: true,
+			admin: true,
+			orderId: id,
+		});
 
 		return res.status(200).json({
 			success: true,

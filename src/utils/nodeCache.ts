@@ -79,7 +79,7 @@ export const filterOrderKeys = async () => {
 	// 	convert to Object id to string for iteration
 	const orderIds: string[] = orderId.map((id) => id._id.toString());
 
-	// 	filter the keys
+	// filter the keys
 	const keys: string[] | undefined = allKeys.filter((key) => {
 		const startWithOrder = key.startsWith("order-");
 		if (startWithOrder) {
@@ -113,6 +113,8 @@ export const invalidateCache = async ({
 	product,
 	order,
 	admin,
+	userId,
+	orderId,
 }: InvalidateCacheProps) => {
 	try {
 		if (product) {
@@ -127,7 +129,10 @@ export const invalidateCache = async ({
 			nodeCache.del(keys);
 		}
 		if (order) {
-			const orderKeys: string[] = ["all-admin-orders"];
+			const orderKeys: string[] = [
+				"all-admin-orders",
+				`order-${orderId}`,
+			];
 			const filter = await filterOrderKeys();
 
 			const keys = [...orderKeys, ...filter];
