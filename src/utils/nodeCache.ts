@@ -67,46 +67,6 @@ const filterProductKeys = async () => {
 	return key;
 };
 
-// * Filter the keys that have order keys and also my_order_${id}
-
-export const filterOrderKeys = async () => {
-	// Get all keys
-	const allKeys = nodeCache.keys();
-
-	// 	get all order id from dataBase
-	const orderId = await Order.find({}).select("_id").lean().exec();
-
-	// 	convert to Object id to string for iteration
-	const orderIds: string[] = orderId.map((id) => id._id.toString());
-
-	// filter the keys
-	const keys: string[] | undefined = allKeys.filter((key) => {
-		const startWithOrder = key.startsWith("order-");
-		if (startWithOrder) {
-			const id = key.split("-").pop();
-			return orderIds.find((oId) => oId === id) || undefined;
-		}
-	});
-
-	// get all user id for my-orders${id}
-	const userId = await UserModel.find({}).select("_id").lean().exec();
-	// convert string for iteration
-	const userIds: string[] = userId.map((id) => id._id.toString());
-
-	// filter the keys
-	const myOrdersKeys: string[] | undefined = allKeys.filter((key: string) => {
-		const startWithMyOrders = key.startsWith("my_orders_");
-
-		if (startWithMyOrders) {
-			const id: string | undefined = key.split("_").pop();
-
-			return userIds.find((uId) => uId === id) || undefined;
-		}
-	});
-
-	return [...keys, ...myOrdersKeys];
-};
-
 // * Node Cache Revalidate / Invalidate Cache
 
 export const invalidateCache = async ({
@@ -131,13 +91,11 @@ export const invalidateCache = async ({
 		if (order) {
 			const orderKeys: string[] = [
 				"all-admin-orders",
+				`my_orders_${userId}`,
 				`order-${orderId}`,
 			];
-			const filter = await filterOrderKeys();
 
-			const keys = [...orderKeys, ...filter];
-
-			nodeCache.del(keys);
+			nodeCache.del(orderKeys);
 		}
 		if (admin) {
 		}
@@ -145,3 +103,43 @@ export const invalidateCache = async ({
 		logger.error(`Error occurred in the cache: ${error}`);
 	}
 };
+
+// * Filter the keys that have order keys and also my_order_${id}
+
+// export const filterOrderKeys = async () => {
+// 	// Get all keys
+// 	const allKeys = nodeCache.keys();
+//
+// 	// 	get all order id from dataBase
+// 	const orderId = await Order.find({}).select("_id").lean().exec();
+//
+// 	// 	convert to Object id to string for iteration
+// 	const orderIds: string[] = orderId.map((id) => id._id.toString());
+//
+// 	// filter the keys
+// 	const keys: string[] | undefined = allKeys.filter((key) => {
+// 		const startWithOrder = key.startsWith("order-");
+// 		if (startWithOrder) {
+// 			const id = key.split("-").pop();
+// 			return orderIds.find((oId) => oId === id) || undefined;
+// 		}
+// 	});
+//
+// 	// get all user id for my-orders${id}
+// 	// const userId = await UserModel.find({}).select("_id").lean().exec();
+// 	// // convert string for iteration
+// 	// const userIds: string[] = userId.map((id) => id._id.toString());
+// 	//
+// 	// // filter the keys
+// 	// const myOrdersKeys: string[] | undefined = allKeys.filter((key: string) => {
+// 	// 	const startWithMyOrders = key.startsWith("my_orders_");
+// 	//
+// 	// 	if (startWithMyOrders) {
+// 	// 		const id: string | undefined = key.split("_").pop();
+// 	//
+// 	// 		return userIds.find((uId) => uId === id) || undefined;
+// 	// 	}
+// 	// });
+//
+// 	return keys;
+// };

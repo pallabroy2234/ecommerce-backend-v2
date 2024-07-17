@@ -73,7 +73,12 @@ export const handleNewOrder = TryCatch(
 			orderItems: order,
 		});
 
-		await invalidateCache({product: true, order: true, admin: true});
+		await invalidateCache({
+			product: true,
+			order: true,
+			admin: true,
+			userId: req.body.user.toString(),
+		});
 
 		return res.status(201).json({
 			success: true,
@@ -197,7 +202,13 @@ export const handleProcessOrder = TryCatch(
 		await order.save();
 
 		// 	 Invalidate cache
-		await invalidateCache({product: false, order: true, admin: true});
+		await invalidateCache({
+			product: false,
+			order: true,
+			admin: true,
+			userId: order.user,
+			orderId: order._id.toString(),
+		});
 
 		return res.status(200).json({
 			success: true,
@@ -222,6 +233,7 @@ export const handleDeleteOrder = TryCatch(
 			product: true,
 			order: true,
 			admin: true,
+			userId: deleteOrder.user,
 			orderId: id,
 		});
 
