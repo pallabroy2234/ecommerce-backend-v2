@@ -225,10 +225,13 @@ export const handleUpdateSingleProduct = TryCatch(
 			},
 		);
 
-		await invalidateCache({product: true, productId: id.toString()});
-
 		if (!updatedProduct)
 			return next(new ErrorHandler("Error updating product", 404));
+
+		await invalidateCache({
+			product: true,
+			productId: String(updatedProduct._id),
+		});
 
 		return res.status(200).json({
 			success: true,
@@ -254,10 +257,14 @@ export const handleDeleteProduct = TryCatch(
 		const deletedProduct = await Product.findByIdAndDelete({_id: id});
 
 		//  Invalidate the cache
-		await invalidateCache({product: true, productId: id.toString()});
 
 		if (!deletedProduct)
 			return next(new ErrorHandler("Error deleting product", 404));
+
+		await invalidateCache({
+			product: true,
+			productId: String(deletedProduct._id),
+		});
 
 		return res.status(200).json({
 			success: true,
