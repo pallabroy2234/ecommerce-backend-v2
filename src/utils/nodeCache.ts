@@ -76,7 +76,6 @@ export const invalidateCache = async ({
 				`order-${orderId}`,
 			];
 
-			console.log(orderKeys);
 			nodeCache.del(orderKeys);
 		}
 		if (admin) {
