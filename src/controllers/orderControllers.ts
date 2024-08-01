@@ -78,6 +78,9 @@ export const handleNewOrder = TryCatch(
 			order: true,
 			admin: true,
 			userId: req.body.user.toString(),
+			productId: createOrder.orderItems.map((item) =>
+				item.productId.toString(),
+			),
 		});
 
 		return res.status(201).json({

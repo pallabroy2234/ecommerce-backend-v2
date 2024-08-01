@@ -75,6 +75,7 @@ export const invalidateCache = async ({
 	admin,
 	userId,
 	orderId,
+	productId,
 }: InvalidateCacheProps) => {
 	try {
 		if (product) {
@@ -84,9 +85,17 @@ export const invalidateCache = async ({
 				"categories",
 			];
 
-			const filter = await filterProductKeys();
-			const keys = [...productsKeys, ...filter];
-			nodeCache.del(keys);
+			if (Array.isArray(productId)) {
+				productId.map((id) => {
+					productsKeys.push(`product-${id}`);
+				});
+			}
+
+			if (typeof productId === "string") {
+				productsKeys.push(`product-${productId}`);
+			}
+
+			nodeCache.del(productsKeys);
 		}
 		if (order) {
 			const orderKeys: string[] = [
@@ -95,6 +104,7 @@ export const invalidateCache = async ({
 				`order-${orderId}`,
 			];
 
+			console.log(orderKeys);
 			nodeCache.del(orderKeys);
 		}
 		if (admin) {
