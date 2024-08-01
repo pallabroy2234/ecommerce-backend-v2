@@ -1,9 +1,6 @@
 import NodeCache from "node-cache";
 import logger from "./logger.js";
 import {InvalidateCacheProps} from "../types/types.js";
-import {Product} from "../models/productModel.js";
-import {Order} from "../models/orderModel.js";
-import {UserModel} from "../models/userModel.js";
 
 export const nodeCache = new NodeCache({
 	stdTTL: 0,
@@ -40,31 +37,6 @@ nodeCache.get = <T>(key: string): T | undefined => {
 		logger.info(`Key: ${key} is retrieved from the cache`);
 	}
 	return value;
-};
-
-// * Filter the keys that have product-id
-const filterProductKeys = async () => {
-	// Get all keys which store in the cache
-	const allKeys = nodeCache.keys();
-
-	// Get all product id from the database
-	const productId = await Product.find({}).lean().exec();
-	// convert the product id to string
-	const productIds = productId.map((id) => id._id.toString());
-
-	const key: string[] | undefined = allKeys.filter((key) => {
-		const productKeys = key.startsWith("product-");
-		if (productKeys) {
-			const id = key.split("-").pop();
-
-			// 	match the product id with the keys and return the id
-			const matched: string | undefined = productIds.find(
-				(pId) => pId === id,
-			);
-			return matched;
-		}
-	});
-	return key;
 };
 
 // * Node Cache Revalidate / Invalidate Cache
@@ -152,4 +124,30 @@ export const invalidateCache = async ({
 // 	// });
 //
 // 	return keys;
+// };
+
+// * Filter the keys that have product-id
+
+// const filterProductKeys = async () => {
+// 	// Get all keys which store in the cache
+// 	const allKeys = nodeCache.keys();
+//
+// 	// Get all product id from the database
+// 	const productId = await Product.find({}).lean().exec();
+// 	// convert the product id to string
+// 	const productIds = productId.map((id) => id._id.toString());
+//
+// 	const key: string[] | undefined = allKeys.filter((key) => {
+// 		const productKeys = key.startsWith("product-");
+// 		if (productKeys) {
+// 			const id = key.split("-").pop();
+//
+// 			// 	match the product id with the keys and return the id
+// 			const matched: string | undefined = productIds.find(
+// 				(pId) => pId === id,
+// 			);
+// 			return matched;
+// 		}
+// 	});
+// 	return key;
 // };
