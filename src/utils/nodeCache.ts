@@ -45,6 +45,8 @@ export const invalidateCache = async ({
 	product,
 	order,
 	admin,
+	coupon,
+	couponId,
 	userId,
 	orderId,
 	productId,
@@ -79,6 +81,12 @@ export const invalidateCache = async ({
 			nodeCache.del(orderKeys);
 		}
 		if (admin) {
+		}
+
+		if (coupon) {
+			const couponKeys: string[] = ["all-coupons"];
+
+			nodeCache.del(couponKeys);
 		}
 	} catch (error) {
 		logger.error(`Error occurred in the cache: ${error}`);

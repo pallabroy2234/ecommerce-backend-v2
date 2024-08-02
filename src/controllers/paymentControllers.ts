@@ -5,6 +5,7 @@ import ErrorHandler from "../utils/utility-class.js";
 import {throws} from "node:assert";
 import {validateAllowedFields} from "../utils/allowedFields.js";
 import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
+import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
 
 /**
  * @desc    Create a new coupon
@@ -39,6 +40,8 @@ export const handleNewCoupon = TryCatch(
 			code: coupon,
 			amount,
 		});
+
+		await invalidateCache({coupon: true});
 
 		return res.status(201).json({
 			success: true,
@@ -78,6 +81,32 @@ export const handleApplyCoupon = TryCatch(
 			payload: {
 				discount: discount.amount,
 			},
+		});
+	},
+);
+
+/**
+ * @desc   Get all coupons
+ * @route  GET /api/v1/payment/coupon/all
+ * @access Private/Admin
+ * */
+
+export const handleAllCoupons = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		let coupons = [];
+		const key = `all-coupons`;
+
+		if (nodeCache.has(key)) {
+			coupons = JSON.parse(nodeCache.get(key) as string);
+		} else {
+			coupons = await Coupon.find({});
+			nodeCache.set(key, JSON.stringify(coupons));
+		}
+
+		return res.status(coupons.length > 0 ? 200 : 404).json({
+			success: coupons.length > 0,
+			message: coupons.length > 0 ? "All coupons" : "No coupons found",
+			payload: coupons,
 		});
 	},
 );

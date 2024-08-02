@@ -6,6 +6,7 @@ import {
 } from "../validators/validatePayemnt.js";
 import {runValidation} from "../validators/index.js";
 import {
+	handleAllCoupons,
 	handleApplyCoupon,
 	handleNewCoupon,
 } from "../controllers/paymentControllers.js";
@@ -37,5 +38,13 @@ paymentRouter.get(
 	runValidation(400),
 	handleApplyCoupon,
 );
+
+/**
+ * @desc   Get all coupons
+ * @route  GET /api/v1/payment/coupon/all
+ * @access Private/Admin
+ * */
+
+paymentRouter.get("/coupon/all", isAdmin, handleAllCoupons);
 
 export default paymentRouter;
