@@ -1,4 +1,4 @@
-import {body} from "express-validator";
+import {body, query} from "express-validator";
 
 export const validateNewCoupon = [
 	body("coupon")
@@ -8,7 +8,6 @@ export const validateNewCoupon = [
 		.withMessage("Coupon code must be a string")
 		.matches(/^[A-Za-z0-9]+$/)
 		.withMessage("Coupon code can only contain letters and numbers"),
-
 	body("amount")
 		.notEmpty()
 		.withMessage("Please enter a discount amount")
@@ -22,4 +21,12 @@ export const validateNewCoupon = [
 			}
 			return true;
 		}),
+];
+
+export const validateApplyCouponCode = [
+	query("coupon")
+		.notEmpty()
+		.withMessage("Invalid Coupon Code")
+		.matches(/^[A-Za-z0-9]+$/)
+		.withMessage("Invalid Coupon Code"),
 ];
