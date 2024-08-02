@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const couponSchema = new mongoose.Schema(
 	{
-		coupon: {
+		code: {
 			type: String,
+			uppercase: true,
 			required: [true, "Please enter Coupon Code"],
-			unique: true,
 			trim: true,
 		},
 		amount: {
@@ -16,4 +16,4 @@ const couponSchema = new mongoose.Schema(
 	{timestamps: true},
 );
 
-const Coupon = mongoose.model("Coupon", couponSchema);
+export const Coupon = mongoose.model("Coupon", couponSchema);
