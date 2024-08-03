@@ -110,3 +110,29 @@ export const handleAllCoupons = TryCatch(
 		});
 	},
 );
+
+/**
+ * @desc    Delete Single Coupon
+ * @route   DELETE /api/v1/payment/coupon/:id
+ * @access  Private/Admin
+ * */
+
+export const handleDeleteCoupon = TryCatch(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const {id} = req.params;
+
+		const deleteCoupon = await Coupon.findByIdAndDelete(id);
+
+		if (!deleteCoupon) {
+			return next(new ErrorHandler("Coupon not found", 404));
+		}
+
+		// Invalidate Cache
+		await invalidateCache({coupon: true});
+
+		return res.status(200).json({
+			success: true,
+			message: "Coupon deleted successfully",
+		});
+	},
+);

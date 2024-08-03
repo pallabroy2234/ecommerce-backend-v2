@@ -1,4 +1,4 @@
-import {body, query} from "express-validator";
+import {body, param, query} from "express-validator";
 
 export const validateNewCoupon = [
 	body("coupon")
@@ -29,4 +29,28 @@ export const validateApplyCouponCode = [
 		.withMessage("Invalid Coupon Code")
 		.matches(/^[A-Za-z0-9]+$/)
 		.withMessage("Invalid Coupon Code"),
+];
+
+/**
+ * @desc          Delete Coupon params validation
+ * @route         DELETE /api/v1/payment/coupon/:id
+ * @access        Private/Admin
+ *
+ * @validation
+ *  - params("id): Coupon ID
+ *  - Must be not empty
+ *  - Must be a valid MongoDB ID
+ *
+ *  @erros
+ *   - "Coupon ID is required": Returned if the ID parameter is missing.
+ *   - "Invalid Id": Returned if the ID parameter is not a valid MongoDB ObjectId.
+ *
+ * */
+
+export const validateDeleteCoupon = [
+	param("id")
+		.notEmpty()
+		.withMessage("Coupon ID is required")
+		.isMongoId()
+		.withMessage("Invalid Id"),
 ];
