@@ -8,10 +8,11 @@ import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
 
 /**
- * @desc    Create a new coupon
- * @route   POST /api/v1/payment/coupon/new
- * @access  Private/Admin
+ * @description     Handles the creation of a new coupon.
+ * @route           POST /api/v1/payment/coupon/new
+ * @access          Private/Admin
  */
+
 export const handleNewCoupon = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {
 		const {coupon, amount} = req.body;
@@ -51,9 +52,9 @@ export const handleNewCoupon = TryCatch(
 );
 
 /**
- * @desc    Get one coupon || Apply coupon
- * @route   GET /api/v1/payment/coupon/discount?coupon=COUPON
- * @access  Private/ Only for user
+ * @description      Handles the application of a coupon code to a purchase.
+ * @route            GET /api/v1/payment/coupon/discount?coupon=COUPON
+ * @access           Private/ Only for user
  */
 
 export const handleApplyCoupon = TryCatch(
@@ -86,7 +87,7 @@ export const handleApplyCoupon = TryCatch(
 );
 
 /**
- * @desc   Get all coupons
+ * @description    Handles the retrieval of all coupons.
  * @route  GET /api/v1/payment/coupon/all
  * @access Private/Admin
  * */
@@ -112,9 +113,9 @@ export const handleAllCoupons = TryCatch(
 );
 
 /**
- * @desc    Delete Single Coupon
- * @route   DELETE /api/v1/payment/coupon/:id
- * @access  Private/Admin
+ * @description    Handles the deletion of a single coupon by its ID.
+ * @route          DELETE /api/v1/payment/coupon/:id
+ * @access         Private/Admin
  * */
 
 export const handleDeleteCoupon = TryCatch(
