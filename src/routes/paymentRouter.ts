@@ -16,9 +16,11 @@ import {
 const paymentRouter = express.Router();
 
 /**
- * @route  POST /api/v1/payment/coupon/new
- * @desc   Create a new coupon
- * @access Private/Admin
+ * @route      POST /api/v1/payment/coupon/new
+ * @desc       Create a new coupon
+ * @access     Private/Admin
+ *
+ * @handler    handleNewCoupon: Process the request to create a new coupon
  */
 paymentRouter.post(
 	"/coupon/new",
@@ -29,9 +31,11 @@ paymentRouter.post(
 );
 
 /**
- * @route  GET /api/v1/payment/coupon/discount?coupon=COUPON
- * @desc   Get one coupon
- * @access Private/ Only for user
+ * @route        GET /api/v1/payment/coupon/discount?coupon=COUPON
+ * @desc         Get one coupon
+ * @access       Private/ Only for user
+ *
+ * @handler      handleApplyCoupon: Process the request to apply coupon or apply discount
  */
 
 paymentRouter.get(
@@ -42,9 +46,11 @@ paymentRouter.get(
 );
 
 /**
- * @desc   Get all coupons
- * @route  GET /api/v1/payment/coupon/all
- * @access Private/Admin
+ * @desc       Get all coupons
+ * @route      GET /api/v1/payment/coupon/all
+ * @access     Private/Admin
+ *
+ * @handler    handleAllCoupons: Process the request to get all coupons
  * */
 
 paymentRouter.get("/coupon/all", isAdmin, handleAllCoupons);
@@ -53,6 +59,8 @@ paymentRouter.get("/coupon/all", isAdmin, handleAllCoupons);
  * @desc     Delete single coupon
  * @route    Delete /api/v1/payment/coupon/:id
  * @access   Private/Admin
+ *
+ * @handler  handleDeleteCoupon : Process the request to delete the coupon
  * */
 
 paymentRouter.delete(
