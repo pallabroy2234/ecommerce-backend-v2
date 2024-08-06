@@ -18,6 +18,8 @@ import {userRouter} from "./routes/userRouter.js";
 import productRouter from "./routes/productRouter.js";
 import orderRouter from "./routes/orderRouter.js";
 import paymentRouter from "./routes/paymentRouter.js";
+import statsRouter from "./routes/stats.js";
+import dashboardRouter from "./routes/stats.js";
 
 const app: Express = express();
 
@@ -34,6 +36,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/product", productRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/payment", paymentRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 
 // * Static Files
 app.use("/public", express.static("public"));
