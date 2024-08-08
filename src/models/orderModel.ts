@@ -23,6 +23,8 @@ interface IOrder {
 			image: string;
 		},
 	];
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 const orderSchema = new Schema(

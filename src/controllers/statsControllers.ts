@@ -19,7 +19,11 @@ export const handleGetDashboardStats = TryCatch(
 		if (nodeCache.has(key)) {
 			stats = JSON.parse(nodeCache.get(key) as string);
 		} else {
+			// * Date
 			const today = new Date();
+			const sixMonthsAgo = new Date();
+			sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
 			const thisMonth = {
 				start: new Date(today.getFullYear(), today.getMonth(), 1),
 				end: today,
@@ -70,6 +74,12 @@ export const handleGetDashboardStats = TryCatch(
 					$lte: lastMonth.end,
 				},
 			});
+			const lastSixMonthOrdersPromise = Order.find({
+				createdAt: {
+					$gte: sixMonthsAgo,
+					$lte: today,
+				},
+			});
 
 			const [
 				thisMonthProducts,
@@ -78,6 +88,7 @@ export const handleGetDashboardStats = TryCatch(
 				lastMonthUsers,
 				thisMonthOrders,
 				lastMonthOrders,
+				lastSixMonthOrders,
 				totalProducts,
 				totalUsers,
 				allOrder,
@@ -88,6 +99,7 @@ export const handleGetDashboardStats = TryCatch(
 				lastMonthUsersPromise,
 				thisMonthOrdersPromise,
 				lastMonthOrdersPromise,
+				lastSixMonthOrdersPromise,
 				Product.countDocuments(),
 				UserModel.countDocuments(),
 				Order.find({}).select("total"),
@@ -129,6 +141,23 @@ export const handleGetDashboardStats = TryCatch(
 				0,
 			);
 
+			const orderMonthCounts = new Array(6).fill(0);
+			const orderMonthRevenue = new Array(6).fill(0);
+
+			lastSixMonthOrders.forEach((order) => {
+				const creationDate = order.createdAt;
+				const yearDiff =
+					today.getFullYear() - creationDate.getFullYear();
+				const monthDiff =
+					yearDiff * 12 +
+					(today.getMonth() - creationDate.getMonth());
+
+				if (monthDiff < 6) {
+					orderMonthCounts[6 - monthDiff - 1] += 1;
+					orderMonthRevenue[6 - monthDiff - 1] += order.total || 0;
+				}
+			});
+
 			// * count
 			const count = {
 				revenue: revenue,
@@ -140,6 +169,10 @@ export const handleGetDashboardStats = TryCatch(
 			stats = {
 				percentage,
 				count,
+				chart: {
+					orderMonthCounts,
+					orderMonthRevenue,
+				},
 			};
 		}
 
