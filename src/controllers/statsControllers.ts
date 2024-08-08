@@ -23,7 +23,6 @@ export const handleGetDashboardStats = TryCatch(
 			const today = new Date();
 			const sixMonthsAgo = new Date();
 			sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
 			const thisMonth = {
 				start: new Date(today.getFullYear(), today.getMonth(), 1),
 				end: today,
@@ -81,6 +80,12 @@ export const handleGetDashboardStats = TryCatch(
 				},
 			});
 
+			// * Latest four transactions
+			const latestTransactionsPromise = Order.find({})
+				.limit(4)
+				.select(["discount", "total", "status", "createdAt"])
+				.sort({createdAt: -1});
+
 			const [
 				thisMonthProducts,
 				lastMonthProducts,
@@ -92,6 +97,10 @@ export const handleGetDashboardStats = TryCatch(
 				totalProducts,
 				totalUsers,
 				allOrder,
+				categories,
+				totalFemale,
+				totalMale,
+				latestTransactions,
 			] = await Promise.all([
 				thisMonthProductsPromise,
 				lastMonthProductsPromise,
@@ -103,6 +112,10 @@ export const handleGetDashboardStats = TryCatch(
 				Product.countDocuments(),
 				UserModel.countDocuments(),
 				Order.find({}).select("total"),
+				Product.distinct("category"),
+				UserModel.countDocuments({gender: "female"}),
+				UserModel.countDocuments({gender: "male"}),
+				latestTransactionsPromise,
 			]);
 
 			// * Revenue
@@ -140,10 +153,8 @@ export const handleGetDashboardStats = TryCatch(
 				(acc, order) => acc + (order.total || 0),
 				0,
 			);
-
 			const orderMonthCounts = new Array(6).fill(0);
 			const orderMonthRevenue = new Array(6).fill(0);
-
 			lastSixMonthOrders.forEach((order) => {
 				const creationDate = order.createdAt;
 				const yearDiff =
@@ -158,22 +169,50 @@ export const handleGetDashboardStats = TryCatch(
 				}
 			});
 
+			// * Percentage of each category
+			const categoriesCountPromise = categories.map((category) =>
+				Product.countDocuments({category}),
+			);
+			const categoriesCount = await Promise.all(categoriesCountPromise);
+
+			const categoryCount: any[] = [];
+			categories.forEach((category, index) => {
+				categoryCount.push({
+					[category]: Math.round(
+						(categoriesCount[index] / totalProducts) * 100,
+					),
+				});
+			});
+
+			// * Gender Ratio
+			const userRatio = {
+				female: totalFemale,
+				male: totalMale,
+				other: totalUsers - totalFemale - totalMale,
+			};
+
 			// * count
 			const count = {
-				revenue: revenue,
-				product: totalProducts,
-				user: totalUsers,
-				order: allOrder.length,
+				totalRevenue: revenue,
+				totalProducts,
+				totalUsers,
+				totalOrders: allOrder.length,
 			};
 
 			stats = {
-				percentage,
-				count,
+				categoryCount: categoryCount || [],
+				percentage: percentage || {},
+				count: count || {},
 				chart: {
-					orderMonthCounts,
-					orderMonthRevenue,
+					orderMonthCounts: orderMonthCounts || {},
+					orderMonthRevenue: orderMonthRevenue || {},
 				},
+				userRatio: userRatio || {},
+				latestTransactions: latestTransactions || [],
 			};
+
+			// 	* Invalid Cache
+			nodeCache.set(key, JSON.stringify(stats));
 		}
 
 		return res.status(200).json({
