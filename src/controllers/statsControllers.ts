@@ -223,6 +223,11 @@ export const handleGetDashboardStats = TryCatch(
 	},
 );
 
+/**
+ * @description     Handles Get Dashboard Pie Charts Data
+ * @route           POST /api/v1/dashboard/pie
+ * @access          Private/Admin
+ */
 export const handleGetPieChartsData = TryCatch(
 	async (req: Request, res: Response, next: NextFunction) => {},
 );
