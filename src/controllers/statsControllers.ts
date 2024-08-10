@@ -5,6 +5,9 @@ import {Product} from "../models/productModel.js";
 import {UserModel} from "../models/userModel.js";
 import {Order} from "../models/orderModel.js";
 import {calculatePercentage} from "../utils/calculatePercentage.js";
+import {tr} from "@faker-js/faker";
+import {getCategories} from "../utils/statsUtils.js";
+import ErrorHandler from "../utils/utility-class.js";
 
 /**
  * @description     Handles Get Dashboard stats
@@ -170,19 +173,14 @@ export const handleGetDashboardStats = TryCatch(
 			});
 
 			// * Percentage of each category
-			const categoriesCountPromise = categories.map((category) =>
-				Product.countDocuments({category}),
-			);
-			const categoriesCount = await Promise.all(categoriesCountPromise);
-
-			const categoryCount: any[] = [];
-			categories.forEach((category, index) => {
-				categoryCount.push({
-					[category]: Math.round(
-						(categoriesCount[index] / totalProducts) * 100,
-					),
-				});
+			const categoryCount = await getCategories({
+				categories,
+				totalProducts,
+				next,
 			});
+			if (categoryCount instanceof Error) {
+				return next(categoryCount);
+			}
 
 			// * Gender Ratio
 			const userRatio = {
@@ -229,7 +227,71 @@ export const handleGetDashboardStats = TryCatch(
  * @access          Private/Admin
  */
 export const handleGetPieChartsData = TryCatch(
-	async (req: Request, res: Response, next: NextFunction) => {},
+	async (req: Request, res: Response, next: NextFunction) => {
+		let charts = {};
+		const key = "admin-pie-charts";
+
+		if (nodeCache.has(key)) {
+			charts = JSON.parse(nodeCache.get(key) as string);
+		} else {
+			const [
+				processingOrder,
+				shippedOrder,
+				deliveredOrder,
+				cancelledOrder,
+				categories,
+				totalProducts,
+				productInStock,
+			] = await Promise.all([
+				Order.countDocuments({status: "processing"}),
+				Order.countDocuments({status: "shipped"}),
+				Order.countDocuments({status: "delivered"}),
+				Order.countDocuments({status: "cancelled"}),
+				Product.distinct("category"),
+				Product.countDocuments(),
+				Product.countDocuments({stock: {$gt: 0}}),
+			]);
+
+			// 	* order FullFill
+			const orderFullFill = {
+				processing: processingOrder,
+				shipped: shippedOrder,
+				delivered: deliveredOrder,
+				cancelled: cancelledOrder,
+			};
+
+			// * Percentage of each category
+			const categoryPercentage = await getCategories({
+				categories,
+				totalProducts,
+				next,
+			});
+			if (categoryPercentage instanceof Error) {
+				return next(categoryPercentage);
+			}
+
+			// * Stock Availability
+			const stockAvailability = {
+				inStock: productInStock,
+				outOfStock: totalProducts - productInStock,
+			};
+
+			charts = {
+				orderFullFill: orderFullFill || {},
+				categoryPercentage: categoryPercentage || [],
+				stockAvailability: stockAvailability || {},
+			};
+
+			// 	* Set Cache
+			nodeCache.set(key, JSON.stringify(charts));
+		}
+
+		return res.status(200).json({
+			success: true,
+			message: "Successfully get pie charts data",
+			payload: charts,
+		});
+	},
 );
 
 export const handleGetBarChartsData = TryCatch(
