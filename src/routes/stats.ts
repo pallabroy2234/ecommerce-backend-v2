@@ -30,7 +30,7 @@ dashboardRouter.get("/pie", isAdmin, handleGetPieChartsData);
 
 /**
  * @route      GET /api/v1/dashboard/bar
- * @desc       get dashboard bar charts data
+ * @desc       GET dashboard bar charts data
  * @access     Private/Admin
  *
  * @handler    handleGetBarChartsData: Process to request get dashboard static Data for bar charts
