@@ -5,6 +5,7 @@ interface IOrder {
 	subtotal: number;
 	tax: number;
 	discount: number;
+	shippingCharges: number;
 	total: number;
 	status: string;
 	shippingInfo: {

@@ -209,7 +209,7 @@ export const handleGetDashboardStats = TryCatch(
 				latestTransactions: latestTransactions || [],
 			};
 
-			// 	* Invalid Cache
+			// 	* Set Cache
 			nodeCache.set(key, JSON.stringify(stats));
 		}
 
@@ -234,6 +234,14 @@ export const handleGetPieChartsData = TryCatch(
 		if (nodeCache.has(key)) {
 			charts = JSON.parse(nodeCache.get(key) as string);
 		} else {
+			const allOrderPromise = Order.find({}).select([
+				"total",
+				"discount",
+				"subtotal",
+				"tax",
+				"shippingCharges",
+			]);
+
 			const [
 				processingOrder,
 				shippedOrder,
@@ -242,6 +250,10 @@ export const handleGetPieChartsData = TryCatch(
 				categories,
 				totalProducts,
 				productInStock,
+				allOrders,
+				allUsers,
+				admins,
+				users,
 			] = await Promise.all([
 				Order.countDocuments({status: "processing"}),
 				Order.countDocuments({status: "shipped"}),
@@ -250,6 +262,10 @@ export const handleGetPieChartsData = TryCatch(
 				Product.distinct("category"),
 				Product.countDocuments(),
 				Product.countDocuments({stock: {$gt: 0}}),
+				allOrderPromise,
+				UserModel.find({}).select(["dob"]),
+				UserModel.countDocuments({role: "admin"}),
+				UserModel.countDocuments({role: "user"}),
 			]);
 
 			// 	* order FullFill
@@ -276,10 +292,58 @@ export const handleGetPieChartsData = TryCatch(
 				outOfStock: totalProducts - productInStock,
 			};
 
+			// * Revenue
+			const grossIncome = allOrders.reduce((acc, order) => {
+				return acc + (order.total || 0);
+			}, 0);
+			const discount = allOrders.reduce((acc, order) => {
+				return acc + (order.discount || 0);
+			}, 0);
+
+			const productionCost = allOrders.reduce((acc, order) => {
+				return acc + (order.shippingCharges || 0);
+			}, 0);
+
+			const burnt = allOrders.reduce((acc, order) => {
+				return acc + (order.tax || 0);
+			}, 0);
+
+			const marketingCost = Math.round(grossIncome * (30 / 100));
+
+			const netMargin =
+				grossIncome - discount - productionCost - marketingCost - burnt;
+
+			const revenueDistribution = {
+				netMargin,
+				discount,
+				productionCost,
+				burnt,
+				marketingCost,
+			};
+
+			// * User Distribution
+
+			const adminUser = {
+				admins: admins,
+				users: users,
+			};
+
+			// * Age Distribution
+			const userAgeGroup = {
+				teen: allUsers.filter((user) => user.age < 20).length,
+				adult: allUsers.filter(
+					(user) => user.age >= 20 && user.age < 40,
+				).length,
+				old: allUsers.filter((user) => user.age >= 40).length,
+			};
+
 			charts = {
 				orderFullFill: orderFullFill || {},
 				categoryPercentage: categoryPercentage || [],
 				stockAvailability: stockAvailability || {},
+				revenueDistribution: revenueDistribution || {},
+				adminUser: adminUser || {},
+				userAgeGroup: userAgeGroup || {},
 			};
 
 			// 	* Set Cache
@@ -294,8 +358,27 @@ export const handleGetPieChartsData = TryCatch(
 	},
 );
 
+/**
+ * @description     Handles Get Dashboard Bar Charts Data
+ * @route           POST /api/v1/dashboard/bar
+ * @access          Private/Admin
+ */
+
 export const handleGetBarChartsData = TryCatch(
-	async (req: Request, res: Response, next: NextFunction) => {},
+	async (req: Request, res: Response, next: NextFunction) => {
+		let barCharts = {};
+		const key = "admin-bar-charts";
+
+		if (nodeCache.has(key)) {
+			barCharts = JSON.parse(nodeCache.get(key) as string);
+		} else {
+		}
+		return res.status(200).json({
+			success: true,
+			message: "Successfully get bar charts data",
+			payload: {},
+		});
+	},
 );
 
 export const handleGetLineChartsData = TryCatch(

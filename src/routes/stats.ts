@@ -6,10 +6,11 @@ import {
 	handleGetPieChartsData,
 } from "../controllers/statsControllers.js";
 import {isAdmin} from "../middlewares/auth.js";
+
 const dashboardRouter = express.Router();
 
 /**
- * @route      POST /api/v1/dashboard/stats
+ * @route      GET /api/v1/dashboard/stats
  * @desc       GET Dashboard Stats
  * @access     Private/Admin
  *
@@ -19,7 +20,7 @@ const dashboardRouter = express.Router();
 dashboardRouter.get("/stats", isAdmin, handleGetDashboardStats);
 
 /**
- * @route      POST /api/v1/dashboard/pie
+ * @route      GET /api/v1/dashboard/pie
  * @desc       GET Dashboard Pie Charts Data
  * @access     Private/Admin
  *
@@ -27,6 +28,13 @@ dashboardRouter.get("/stats", isAdmin, handleGetDashboardStats);
  */
 dashboardRouter.get("/pie", isAdmin, handleGetPieChartsData);
 
+/**
+ * @route      GET /api/v1/dashboard/bar
+ * @desc       get dashboard bar charts data
+ * @access     Private/Admin
+ *
+ * @handler    handleGetBarChartsData: Process to request get dashboard static Data for bar charts
+ * */
 dashboardRouter.get("/bar", handleGetBarChartsData);
 
 dashboardRouter.get("/line", handleGetLineChartsData);
