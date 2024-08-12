@@ -35,7 +35,7 @@ dashboardRouter.get("/pie", isAdmin, handleGetPieChartsData);
  *
  * @handler    handleGetBarChartsData: Process to request get dashboard static Data for bar charts
  * */
-dashboardRouter.get("/bar", handleGetBarChartsData);
+dashboardRouter.get("/bar", isAdmin, handleGetBarChartsData);
 
 dashboardRouter.get("/line", handleGetLineChartsData);
 

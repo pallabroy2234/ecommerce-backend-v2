@@ -6,7 +6,7 @@ import {UserModel} from "../models/userModel.js";
 import {Order} from "../models/orderModel.js";
 import {calculatePercentage} from "../utils/calculatePercentage.js";
 import {tr} from "@faker-js/faker";
-import {getCategories} from "../utils/statsUtils.js";
+import {getCategories, getDataByMonth} from "../utils/statsUtils.js";
 import ErrorHandler from "../utils/utility-class.js";
 
 /**
@@ -372,11 +372,74 @@ export const handleGetBarChartsData = TryCatch(
 		if (nodeCache.has(key)) {
 			barCharts = JSON.parse(nodeCache.get(key) as string);
 		} else {
+			// 	* Date
+			const today = new Date();
+
+			const sixMonthsAgo = new Date();
+			sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+			const twelveMonthsAgo = new Date();
+			twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+
+			// 	* Promise
+			const sixMonthProductsPromise = Product.find({
+				createdAt: {
+					$gte: sixMonthsAgo,
+					$lte: today,
+				},
+			}).select("createdAt");
+			const sixMonthUsersPromise = UserModel.find({
+				createdAt: {
+					$gte: sixMonthsAgo,
+					$lte: today,
+				},
+			}).select("createdAt");
+
+			const twelveMonthOrdersPromise = Order.find({
+				createdAt: {
+					$gte: twelveMonthsAgo,
+					$lte: today,
+				},
+			}).select("createdAt");
+
+			// 	* Promise all
+			const [sixMonthProducts, sixMonthUsers, twelveMonthOrders] =
+				await Promise.all([
+					sixMonthProductsPromise,
+					sixMonthUsersPromise,
+					twelveMonthOrdersPromise,
+				]);
+
+			// * Month wise data
+			const productCount = getDataByMonth({
+				length: 6,
+				today,
+				docArray: sixMonthProducts,
+			});
+			const userCount = getDataByMonth({
+				length: 6,
+				today,
+				docArray: sixMonthUsers,
+			});
+			const orderCount = getDataByMonth({
+				length: 12,
+				today,
+				docArray: twelveMonthOrders,
+			});
+
+			// 		* Bar Chart Data
+			barCharts = {
+				productCount: productCount || [],
+				userCount: userCount || [],
+				orderCount: orderCount || [],
+			};
+
+			// 	* Set Cache
+			nodeCache.set(key, JSON.stringify(barCharts));
 		}
 		return res.status(200).json({
 			success: true,
 			message: "Successfully get bar charts data",
-			payload: {},
+			payload: barCharts,
 		});
 	},
 );

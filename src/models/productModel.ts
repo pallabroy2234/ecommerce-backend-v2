@@ -1,6 +1,7 @@
-import mongoose, {Schema, Document} from "mongoose";
+import mongoose, {Schema, Document, ObjectId} from "mongoose";
 
 interface IProduct extends Document {
+	_id: ObjectId;
 	name: string;
 	category: string;
 	image: string;
