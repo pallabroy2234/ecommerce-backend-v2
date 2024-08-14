@@ -18,8 +18,7 @@ import {userRouter} from "./routes/userRouter.js";
 import productRouter from "./routes/productRouter.js";
 import orderRouter from "./routes/orderRouter.js";
 import paymentRouter from "./routes/paymentRouter.js";
-import statsRouter from "./routes/stats.js";
-import dashboardRouter from "./routes/stats.js";
+import dashboardRouter from "./routes/statsRouter.js";
 
 const app: Express = express();
 
