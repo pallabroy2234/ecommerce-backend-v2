@@ -44,6 +44,6 @@ dashboardRouter.get("/bar", isAdmin, handleGetBarChartsData);
  *
  * @handler    handleGetLineChartsData: Process to request get dashboard static Data for line charts
  * */
-dashboardRouter.get("/line", handleGetLineChartsData);
+dashboardRouter.get("/line", isAdmin, handleGetLineChartsData);
 
 export default dashboardRouter;
