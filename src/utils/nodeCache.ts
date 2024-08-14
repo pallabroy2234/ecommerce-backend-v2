@@ -41,7 +41,7 @@ nodeCache.get = <T>(key: string): T | undefined => {
 
 // * Node Cache Revalidate / Invalidate Cache
 
-export const invalidateCache = async ({
+export const invalidateCache = ({
 	product,
 	order,
 	admin,
@@ -53,11 +53,7 @@ export const invalidateCache = async ({
 }: InvalidateCacheProps) => {
 	try {
 		if (product) {
-			const productsKeys: string[] = [
-				"admin-products",
-				"latestProducts",
-				"categories",
-			];
+			const productsKeys: string[] = ["admin-products", "latestProducts", "categories"];
 
 			if (Array.isArray(productId)) {
 				productId.map((id) => {
@@ -72,15 +68,13 @@ export const invalidateCache = async ({
 			nodeCache.del(productsKeys);
 		}
 		if (order) {
-			const orderKeys: string[] = [
-				"all-admin-orders",
-				`my_orders_${userId}`,
-				`order-${orderId}`,
-			];
+			const orderKeys: string[] = ["all-admin-orders", `my_orders_${userId}`, `order-${orderId}`];
 
 			nodeCache.del(orderKeys);
 		}
 		if (admin) {
+			const adminKeys: string[] = ["admin-stats", "admin-pie-charts", "admin-bar-charts", "admin-line-charts"];
+			nodeCache.del(adminKeys);
 		}
 
 		if (coupon) {

@@ -2,11 +2,7 @@ import {TryCatch} from "../middlewares/error.js";
 import {Request, Response, NextFunction} from "express";
 import {NewOrderRequestBody} from "../types/types.js";
 import {Order} from "../models/orderModel.js";
-import {
-	orderProcessing,
-	validateOrderItemsFields,
-	validateShippingInfoFields,
-} from "../utils/order-utility.js";
+import {orderProcessing, validateOrderItemsFields, validateShippingInfoFields} from "../utils/order-utility.js";
 import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
 import {validateAllowedFields} from "../utils/allowedFields.js";
 import ErrorHandler from "../utils/utility-class.js";
@@ -14,11 +10,7 @@ import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 
 // * New Order handler -> /api/v1/order/new
 export const handleNewOrder = TryCatch(
-	async (
-		req: Request<{}, {}, NewOrderRequestBody>,
-		res: Response,
-		next: NextFunction,
-	) => {
+	async (req: Request<{}, {}, NewOrderRequestBody>, res: Response, next: NextFunction) => {
 		// validate allowed fields
 		const newOrderRequestBody: (keyof NewOrderRequestBody)[] = [
 			"shippingInfo",
@@ -32,18 +24,10 @@ export const handleNewOrder = TryCatch(
 			"discount",
 		];
 
-		const allowedFields: string[] | undefined = validateAllowedFields(
-			req,
-			newOrderRequestBody,
-		);
+		const allowedFields: string[] | undefined = validateAllowedFields(req, newOrderRequestBody);
 
 		if (allowedFields) {
-			return next(
-				new ErrorHandler(
-					`Invalid fields found: ${allowedFields.join(", ")}`,
-					400,
-				),
-			);
+			return next(new ErrorHandler(`Invalid fields found: ${allowedFields.join(", ")}`, 400));
 		}
 
 		//  Validate orderItems fields
@@ -73,14 +57,12 @@ export const handleNewOrder = TryCatch(
 			orderItems: order,
 		});
 
-		await invalidateCache({
+		invalidateCache({
 			product: true,
 			order: true,
 			admin: true,
 			userId: req.body.user.toString(),
-			productId: createOrder.orderItems.map((item) =>
-				item.productId.toString(),
-			),
+			productId: createOrder.orderItems.map((item) => item.productId.toString()),
 		});
 
 		return res.status(201).json({
@@ -93,156 +75,136 @@ export const handleNewOrder = TryCatch(
 
 // * Get my orders handler -> /api/v1/order/myOrders
 
-export const handlerMyOrders = TryCatch(
-	async (req: Request, res: Response, next: NextFunction) => {
-		const {id} = req.query;
+export const handlerMyOrders = TryCatch(async (req: Request, res: Response, next: NextFunction) => {
+	const {id} = req.query;
 
-		const allowedQueryParams: string[] = ["id"];
-		const invalidQuery: string[] | undefined = validateAllowedQueryParams(
-			req,
-			allowedQueryParams,
-		);
-		if (invalidQuery) {
-			return next(
-				new ErrorHandler(
-					`Invalid query params: ${invalidQuery.join(", ")}`,
-					400,
-				),
-			);
-		}
+	const allowedQueryParams: string[] = ["id"];
+	const invalidQuery: string[] | undefined = validateAllowedQueryParams(req, allowedQueryParams);
+	if (invalidQuery) {
+		return next(new ErrorHandler(`Invalid query params: ${invalidQuery.join(", ")}`, 400));
+	}
 
-		let orders = [];
+	let orders = [];
 
-		if (nodeCache.has(`my_orders_${id}`)) {
-			orders = JSON.parse(nodeCache.get(`my_orders_${id}`) as string);
-		} else {
-			orders = await Order.find({user: id}).sort({createdAt: -1});
-			// Cache the orders
-			nodeCache.set(`my_orders_${id}`, JSON.stringify(orders));
-		}
+	if (nodeCache.has(`my_orders_${id}`)) {
+		orders = JSON.parse(nodeCache.get(`my_orders_${id}`) as string);
+	} else {
+		orders = await Order.find({user: id}).sort({createdAt: -1});
+		// Cache the orders
+		nodeCache.set(`my_orders_${id}`, JSON.stringify(orders));
+	}
 
-		return res.status(orders.length > 0 ? 200 : 404).json({
-			success: orders.length > 0,
-			message: orders.length > 0 ? "My orders" : "No orders found",
-			payload: orders,
-		});
-	},
-);
+	return res.status(orders.length > 0 ? 200 : 404).json({
+		success: orders.length > 0,
+		message: orders.length > 0 ? "My orders" : "No orders found",
+		payload: orders,
+	});
+});
 
 // * Get all orders handler -> /api/v1/order/all
 
-export const handleGetAllOrders = TryCatch(
-	async (req: Request, res: Response, next: NextFunction) => {
-		let orders = [];
-		if (nodeCache.has("all-admin-orders")) {
-			orders = JSON.parse(nodeCache.get("all-admin-orders") as string);
-		} else {
-			orders = await Order.find({})
-				.sort({createdAt: -1})
-				.populate("user", "name");
+export const handleGetAllOrders = TryCatch(async (req: Request, res: Response, next: NextFunction) => {
+	let orders = [];
+	if (nodeCache.has("all-admin-orders")) {
+		orders = JSON.parse(nodeCache.get("all-admin-orders") as string);
+	} else {
+		orders = await Order.find({}).sort({createdAt: -1}).populate("user", "name");
 
-			nodeCache.set("all-admin-orders", JSON.stringify(orders));
-		}
+		nodeCache.set("all-admin-orders", JSON.stringify(orders));
+	}
 
-		return res.status(orders.length > 0 ? 200 : 404).json({
-			success: orders.length > 0,
-			message: orders.length > 0 ? "Fet all orders" : "No orders found",
-			payload: orders,
-		});
-	},
-);
+	return res.status(orders.length > 0 ? 200 : 404).json({
+		success: orders.length > 0,
+		message: orders.length > 0 ? "Fet all orders" : "No orders found",
+		payload: orders,
+	});
+});
 
 // * Get Order details handler -> /api/v1/order/:id
 
-export const handleGetOrderDetails = TryCatch(
-	async (req: Request, res: Response, next: NextFunction) => {
-		const {id} = req.params;
+export const handleGetOrderDetails = TryCatch(async (req: Request, res: Response, next: NextFunction) => {
+	const {id} = req.params;
 
-		const key: string = `order-${id}`;
-		let order;
+	const key: string = `order-${id}`;
+	let order;
 
-		if (nodeCache.has(key)) {
-			order = JSON.parse(nodeCache.get(key) as string);
-		} else {
-			order = await Order.findById(id).populate("user", "name");
-			// 	cache the order
-			nodeCache.set(key, JSON.stringify(order));
-		}
+	if (nodeCache.has(key)) {
+		order = JSON.parse(nodeCache.get(key) as string);
+	} else {
+		order = await Order.findById(id).populate("user", "name");
+		// 	cache the order
+		nodeCache.set(key, JSON.stringify(order));
+	}
 
-		return res.status(order ? 200 : 404).json({
-			success: !!order,
-			message: order ? "Fetch order details" : "Order not found",
-			payload: order ? order : {},
-		});
-	},
-);
+	return res.status(order ? 200 : 404).json({
+		success: !!order,
+		message: order ? "Fetch order details" : "Order not found",
+		payload: order ? order : {},
+	});
+});
 
 // * Process Order handler -> /api/v1/order/:id
-export const handleProcessOrder = TryCatch(
-	async (req: Request, res: Response, next: NextFunction) => {
-		const {id} = req.params;
+export const handleProcessOrder = TryCatch(async (req: Request, res: Response, next: NextFunction) => {
+	const {id} = req.params;
 
-		const order = await Order.findById(id);
+	const order = await Order.findById(id);
 
-		if (!order) {
-			return next(new ErrorHandler("Order not found", 404));
-		}
+	if (!order) {
+		return next(new ErrorHandler("Order not found", 404));
+	}
 
-		// 	change order status
+	// 	change order status
 
-		switch (order.status) {
-			case "processing":
-				order.status = "shipped";
-				break;
-			case "shipped":
-				order.status = "delivered";
-				break;
-			default:
-				order.status = "delivered";
-				break;
-		}
+	switch (order.status) {
+		case "processing":
+			order.status = "shipped";
+			break;
+		case "shipped":
+			order.status = "delivered";
+			break;
+		default:
+			order.status = "delivered";
+			break;
+	}
 
-		await order.save();
+	await order.save();
 
-		// 	 Invalidate cache
-		await invalidateCache({
-			product: false,
-			order: true,
-			admin: true,
-			userId: order.user,
-			orderId: order._id.toString(),
-		});
+	// 	 Invalidate cache
+	invalidateCache({
+		product: false,
+		order: true,
+		admin: true,
+		userId: order.user,
+		orderId: order._id.toString(),
+	});
 
-		return res.status(200).json({
-			success: true,
-			message: "Order processed successfully",
-		});
-	},
-);
+	return res.status(200).json({
+		success: true,
+		message: "Order processed successfully",
+	});
+});
 
 // * Delete Order handler -> /api/v1/order/:id
 
-export const handleDeleteOrder = TryCatch(
-	async (req: Request, res: Response, next: NextFunction) => {
-		const {id} = req.params;
+export const handleDeleteOrder = TryCatch(async (req: Request, res: Response, next: NextFunction) => {
+	const {id} = req.params;
 
-		const deleteOrder = await Order.findByIdAndDelete(id);
+	const deleteOrder = await Order.findByIdAndDelete(id);
 
-		if (!deleteOrder) {
-			return next(new ErrorHandler("Order not found", 404));
-		}
+	if (!deleteOrder) {
+		return next(new ErrorHandler("Order not found", 404));
+	}
 
-		await invalidateCache({
-			product: true,
-			order: true,
-			admin: true,
-			userId: deleteOrder.user,
-			orderId: id,
-		});
+	invalidateCache({
+		product: true,
+		order: true,
+		admin: true,
+		userId: deleteOrder.user,
+		orderId: id,
+	});
 
-		return res.status(200).json({
-			success: true,
-			message: "Order deleted successfully",
-		});
-	},
-);
+	return res.status(200).json({
+		success: true,
+		message: "Order deleted successfully",
+	});
+});
