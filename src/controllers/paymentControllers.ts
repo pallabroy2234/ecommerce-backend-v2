@@ -6,6 +6,27 @@ import {throws} from "node:assert";
 import {validateAllowedFields} from "../utils/allowedFields.js";
 import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
+import {stripe} from "../app.js";
+
+/**
+ * @description     Handles the creation of a new payment.
+ * @route           POST /api/v1/payment/create
+ * @access          Public
+ */
+export const handleCreatePaymentIntent = TryCatch(async (req: Request, res: Response, next: NextFunction) => {
+	const {amount} = req.body;
+
+	const paymentIntent = await stripe.paymentIntents.create({
+		amount: Number(amount) * 100,
+		currency: "bdt",
+	});
+
+	return res.status(201).json({
+		success: true,
+		message: "Payment intent created successfully",
+		payload: paymentIntent.client_secret,
+	});
+});
 
 /**
  * @description     Handles the creation of a new coupon.

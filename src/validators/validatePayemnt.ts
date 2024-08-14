@@ -1,6 +1,31 @@
 import {body, param, query} from "express-validator";
 
 /**
+ * @description   Middleware for validating the request body of the create payment intent API endpoint.
+ * @route         POST /api/v1/payment/create
+ * @access        Public
+ *
+ * @validation
+ *  - "amount":
+ *   - Required, must be a positive number.
+ *
+ * @errors
+ *  - "Please enter an amount to proceed with the payment": Returned if the amount field is missing.
+ *  - "The amount should be a valid number": Returned if the amount field is not a number.
+ *  - "The amount must be greater than zero": Returned if the amount is zero or negative.
+ */
+
+export const validateCreatePaymentIntent = [
+	body("amount")
+		.notEmpty()
+		.withMessage("Please enter amount")
+		.isNumeric()
+		.withMessage("Invalid amount")
+		.custom((value) => value >= 59)
+		.withMessage("The amount must be at least ৳59."),
+];
+
+/**
  * @description Validates the body of the Create New Coupon endpoint.
  *
  * @route      POST /api/v1/payment/coupon
@@ -85,9 +110,5 @@ export const validateApplyCouponCode = [
  * */
 
 export const validateDeleteCoupon = [
-	param("id")
-		.notEmpty()
-		.withMessage("Coupon ID is required")
-		.isMongoId()
-		.withMessage("Invalid Id"),
+	param("id").notEmpty().withMessage("Coupon ID is required").isMongoId().withMessage("Invalid Id"),
 ];

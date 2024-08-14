@@ -2,6 +2,7 @@ import express from "express";
 import {isAdmin} from "../middlewares/auth.js";
 import {
 	validateApplyCouponCode,
+	validateCreatePaymentIntent,
 	validateDeleteCoupon,
 	validateNewCoupon,
 } from "../validators/validatePayemnt.js";
@@ -9,11 +10,21 @@ import {runValidation} from "../validators/index.js";
 import {
 	handleAllCoupons,
 	handleApplyCoupon,
+	handleCreatePaymentIntent,
 	handleDeleteCoupon,
 	handleNewCoupon,
 } from "../controllers/paymentControllers.js";
 
 const paymentRouter = express.Router();
+
+/**
+ * @route      POST /api/v1/payment/create
+ * @desc       Create a payment
+ * @access     public
+ *
+ * @handler    handleCreatePaymentIntent: Process the request to create a payment
+ */
+paymentRouter.post("/create", validateCreatePaymentIntent, runValidation(400), handleCreatePaymentIntent);
 
 /**
  * @route      POST /api/v1/payment/coupon/new
@@ -22,13 +33,7 @@ const paymentRouter = express.Router();
  *
  * @handler    handleNewCoupon: Process the request to create a new coupon
  */
-paymentRouter.post(
-	"/coupon/new",
-	isAdmin,
-	validateNewCoupon,
-	runValidation(400),
-	handleNewCoupon,
-);
+paymentRouter.post("/coupon/new", isAdmin, validateNewCoupon, runValidation(400), handleNewCoupon);
 
 /**
  * @route        GET /api/v1/payment/coupon/discount?coupon=COUPON
@@ -38,12 +43,7 @@ paymentRouter.post(
  * @handler      handleApplyCoupon: Process the request to apply coupon or apply discount
  */
 
-paymentRouter.get(
-	"/coupon/discount",
-	validateApplyCouponCode,
-	runValidation(400),
-	handleApplyCoupon,
-);
+paymentRouter.get("/coupon/discount", validateApplyCouponCode, runValidation(400), handleApplyCoupon);
 
 /**
  * @desc       Get all coupons
@@ -63,12 +63,6 @@ paymentRouter.get("/coupon/all", isAdmin, handleAllCoupons);
  * @handler  handleDeleteCoupon : Process the request to delete the coupon
  * */
 
-paymentRouter.delete(
-	"/coupon/:id",
-	isAdmin,
-	validateDeleteCoupon,
-	runValidation(400),
-	handleDeleteCoupon,
-);
+paymentRouter.delete("/coupon/:id", isAdmin, validateDeleteCoupon, runValidation(400), handleDeleteCoupon);
 
 export default paymentRouter;
