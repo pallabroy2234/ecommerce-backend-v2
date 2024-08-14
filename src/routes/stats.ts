@@ -37,6 +37,13 @@ dashboardRouter.get("/pie", isAdmin, handleGetPieChartsData);
  * */
 dashboardRouter.get("/bar", isAdmin, handleGetBarChartsData);
 
+/**
+ * @route      GET /api/v1/dashboard/line
+ * @desc       GET dashboard line charts data
+ * @access     Private/Admin
+ *
+ * @handler    handleGetLineChartsData: Process to request get dashboard static Data for line charts
+ * */
 dashboardRouter.get("/line", handleGetLineChartsData);
 
 export default dashboardRouter;
