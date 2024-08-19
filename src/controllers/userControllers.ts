@@ -7,11 +7,7 @@ import {validateAllowedFields} from "../utils/allowedFields.js";
 
 // * handleNewUser -> /api/v1/user/new
 export const handleNewUser = TryCatch(
-	async (
-		req: Request<{}, {}, NewUserRequestBody>,
-		res: Response,
-		next: NextFunction,
-	) => {
+	async (req: Request<{}, {}, NewUserRequestBody>, res: Response, next: NextFunction) => {
 		// List fo allowed fields
 
 		const {name, email, gender, image, dob, _id} = req.body;
@@ -19,31 +15,26 @@ export const handleNewUser = TryCatch(
 		let user = await UserModel.findById(_id);
 
 		if (user) {
-			return res.status(200).json({
-				success: true,
-				message: `Welcome back ${name}!`,
-			});
+			const userDob = new Date(user.dob).toISOString().split("T")[0];
+			const inputDob = new Date(dob).toISOString().split("T")[0];
+			if (userDob !== inputDob) {
+				return next(new ErrorHandler("Date of Birth Mismatch", 400));
+			} else if (user.gender !== gender) {
+				return next(new ErrorHandler("Gender Mismatch", 400));
+			} else {
+				return res.status(200).json({
+					success: true,
+					message: `Welcome back ${name}!`,
+				});
+			}
 		}
 
-		const allowedFields = [
-			"name",
-			"email",
-			"gender",
-			"image",
-			"dob",
-			"_id",
-		];
+		const allowedFields = ["name", "email", "gender", "image", "dob", "_id"];
 
 		//  ! Check for any field that are not allowed
 		const invalidFields = validateAllowedFields(req, allowedFields);
 
-		if (invalidFields)
-			return next(
-				new ErrorHandler(
-					`Invalid Fields: ${invalidFields.join(", ")}`,
-					400,
-				),
-			);
+		if (invalidFields) return next(new ErrorHandler(`Invalid Fields: ${invalidFields.join(", ")}`, 400));
 
 		user = await UserModel.create({
 			_id,
