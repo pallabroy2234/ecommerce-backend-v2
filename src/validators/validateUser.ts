@@ -16,19 +16,14 @@ export const validateUser = [
 	body("name")
 		.trim()
 		.notEmpty()
-		.withMessage("Please provide your name")
+		.withMessage("Provide your name")
 		.isLength({
 			min: 3,
 			max: 50,
 		})
 		.withMessage("Name must be between 3 and 50 characters"),
-	body("email")
-		.trim()
-		.notEmpty()
-		.withMessage("Please provide an email")
-		.isEmail()
-		.withMessage("Please provide a valid email"),
-	body("image").notEmpty().withMessage("Please provide an image"),
+	body("email").trim().notEmpty().withMessage("Please provide an email").isEmail().withMessage("Provide your email"),
+	body("image").notEmpty().withMessage("Provide an image"),
 	body("gender")
 		.notEmpty()
 		.withMessage("Please Enter your gender")
@@ -41,5 +36,5 @@ export const validateUser = [
 	// 	return true;
 	// })
 	// .withMessage("Only JPG, JPEG, and PNG images are allowed"),
-	body("dob").trim().notEmpty().withMessage("Please provide a date of birth"),
+	body("dob").trim().notEmpty().withMessage("Provide your Date of Birth"),
 ];
