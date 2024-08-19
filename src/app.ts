@@ -7,6 +7,7 @@ import {errorMiddleWare, notFound} from "./middlewares/error.js";
 import connectDatabase from "./utils/feature.js";
 import swaggerDocs from "./utils/swagger.js";
 import Stripe from "stripe";
+import cors from "cors";
 
 dotenv.config();
 const port: string | number = process.env.PORT || 5000;
@@ -34,6 +35,7 @@ swaggerDocs(app, port);
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cors());
 
 //  Routes Define
 app.use("/api/v1/user", userRouter);
