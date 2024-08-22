@@ -44,26 +44,14 @@ export const validateProduct = [
 
 // * Find a single product by id validation
 export const validateSingleProduct = [
-	param("id")
-		.notEmpty()
-		.withMessage("Product id is required")
-		.isMongoId()
-		.withMessage("Invalid product id"),
+	param("id").notEmpty().withMessage("Product id is required").isMongoId().withMessage("Invalid product id"),
 ];
 
 // * Update a single product validation
 
 export const validateUpdateProduct = [
-	param("id")
-		.notEmpty()
-		.withMessage("Product id is required")
-		.isMongoId()
-		.withMessage("Invalid product id"),
-	body("name")
-		.optional()
-		.trim()
-		.isLength({min: 3})
-		.withMessage("Product name must be at least 3 characters long"),
+	param("id").notEmpty().withMessage("Product id is required").isMongoId().withMessage("Invalid product id"),
+	body("name").optional().trim().isLength({min: 3}).withMessage("Product name must be at least 3 characters long"),
 	body("price")
 		.optional()
 		.trim()
@@ -100,25 +88,13 @@ export const validateUpdateProduct = [
 // * Delete a single product validation
 
 export const validateDeleteProduct = [
-	param("id")
-		.notEmpty()
-		.withMessage("Product id is required")
-		.isMongoId()
-		.withMessage("Invalid product id"),
+	param("id").notEmpty().withMessage("Product id is required").isMongoId().withMessage("Invalid product id"),
 ];
 
 // * Get all product by search query params validation -> only for admin
 export const validateGetAllProducts = [
-	query("search")
-		.optional()
-		.trim()
-		.isString()
-		.withMessage("Search must be a string"),
-	query("price")
-		.optional()
-		.trim()
-		.isNumeric()
-		.withMessage("Price must be a number"),
+	query("search").optional().isString().withMessage("Search must be a string"),
+	query("price").optional().isNumeric().withMessage("Price must be a number"),
 ];
 // body("image")
 // 	.optional()
