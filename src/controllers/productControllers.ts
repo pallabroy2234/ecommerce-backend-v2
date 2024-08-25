@@ -185,7 +185,6 @@ export const handleUpdateSingleProduct = TryCatch(async (req: Request, res: Resp
 	return res.status(200).json({
 		success: true,
 		message: "Product updated successfully",
-		payload: updatedProduct,
 	});
 });
 
@@ -215,7 +214,6 @@ export const handleDeleteProduct = TryCatch(async (req: Request, res: Response, 
 	return res.status(200).json({
 		success: true,
 		message: "Product deleted successfully",
-		payload: deletedProduct,
 	});
 });
 
