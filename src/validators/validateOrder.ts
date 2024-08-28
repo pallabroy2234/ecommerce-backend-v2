@@ -6,19 +6,17 @@ export const validateNewOrder = [
 		.trim()
 		.notEmpty()
 		.withMessage("User Id is required")
-		.isUUID(4)
+		.custom((value) => {
+			// 	Firebase ID Validation: 28 characters, alphanumeric
+			const fireBaseRegex = /^[A-Za-z0-9]{28}$/;
+			if (!fireBaseRegex.test(value)) {
+				throw new Error("Invalid Id");
+			}
+			return true;
+		})
 		.withMessage("Invalid user id"),
-	body("subtotal")
-		.notEmpty()
-		.withMessage("Subtotal is required")
-		.isFloat({min: 0.0})
-		.withMessage("Invalid subtotal"),
-	body("tax")
-		.notEmpty()
-		.withMessage("Tax is required")
-		.isFloat({min: 0.0})
-		.withMessage("Invalid tex")
-		.default(0.0),
+	body("subtotal").notEmpty().withMessage("Subtotal is required").isFloat({min: 0.0}).withMessage("Invalid subtotal"),
+	body("tax").notEmpty().withMessage("Tax is required").isFloat({min: 0.0}).withMessage("Invalid tex").default(0.0),
 	body("shippingCharges")
 		.notEmpty()
 		.withMessage("Shipping Charges is required")
@@ -31,11 +29,7 @@ export const validateNewOrder = [
 		.isFloat({min: 0.0, max: 100.0})
 		.withMessage("Discount must be between 0 and 100")
 		.default(0.0),
-	body("total")
-		.notEmpty()
-		.withMessage("Total is required")
-		.isFloat({min: 0.0})
-		.withMessage("Invalid total"),
+	body("total").notEmpty().withMessage("Total is required").isFloat({min: 0.0}).withMessage("Invalid total"),
 	body("status")
 		.optional()
 		.isString()
@@ -50,20 +44,10 @@ export const validateNewOrder = [
 		.isObject()
 		.withMessage("Invalid shipping info")
 		.custom((value) => {
-			const requiredFields = [
-				"address",
-				"country",
-				"city",
-				"division",
-				"postCode",
-			];
-			const missingFields = requiredFields.filter(
-				(field) => !value.hasOwnProperty(field),
-			);
+			const requiredFields = ["address", "country", "city", "division", "postCode"];
+			const missingFields = requiredFields.filter((field) => !value.hasOwnProperty(field));
 			if (missingFields.length > 0) {
-				throw new Error(
-					`Missing Shipping info fields: ${missingFields.join(", ")}`,
-				);
+				throw new Error(`Missing Shipping info fields: ${missingFields.join(", ")}`);
 			}
 			return true;
 		}),
@@ -125,39 +109,34 @@ export const validateMyOrders = [
 	query("id")
 		.notEmpty()
 		.withMessage("User Id is required")
-		.isUUID(4)
+		.custom((value) => {
+			// 	Firebase ID Validation: 28 characters, alphanumeric
+			const fireBaseRegex = /^[A-Za-z0-9]{28}$/;
+			if (!fireBaseRegex.test(value)) {
+				throw new Error("Invalid Id");
+			}
+			return true;
+		})
 		.withMessage("Invalid user id"),
 ];
 
 //  * validate Get order Details Request Params -> /api/v1/order/:id
 
 export const validateOrderDetails = [
-	param("id")
-		.notEmpty()
-		.withMessage("Order Id is required")
-		.isMongoId()
-		.withMessage("Invalid Id"),
+	param("id").notEmpty().withMessage("Order Id is required").isMongoId().withMessage("Invalid Id"),
 ];
 
 // * validate Process Order Request -> /api/v1/order/:id
 
 export const validateProcessOrder = [
 	query("id").optional().isUUID(4).withMessage("Invalid id"),
-	param("id")
-		.notEmpty()
-		.withMessage("Order Id is required")
-		.isMongoId()
-		.withMessage("Invalid Id"),
+	param("id").notEmpty().withMessage("Order Id is required").isMongoId().withMessage("Invalid Id"),
 ];
 
 //  * validate delete Order Request -> /api/v1/order/:id
 export const validateDeleteOrder = [
 	query("id").optional().isUUID(4).withMessage("Invalid id"),
-	param("id")
-		.notEmpty()
-		.withMessage("Order Id is required")
-		.isMongoId()
-		.withMessage("Invalid Id"),
+	param("id").notEmpty().withMessage("Order Id is required").isMongoId().withMessage("Invalid Id"),
 ];
 // body("shippingInfo")
 // 	.notEmpty()
