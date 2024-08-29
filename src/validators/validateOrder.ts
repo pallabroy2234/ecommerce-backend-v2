@@ -123,7 +123,19 @@ export const validateMyOrders = [
 //  * validate Get order Details Request Params -> /api/v1/order/:id
 
 export const validateOrderDetails = [
-	param("id").notEmpty().withMessage("Order Id is required").isMongoId().withMessage("Invalid Id"),
+	param("id").notEmpty().withMessage("Order Id is required").isMongoId().withMessage("Invalid Order Id"),
+	query("id")
+		.notEmpty()
+		.withMessage("Order Id is required")
+		.custom((value) => {
+			// 	Firebase ID Validation: 28 characters, alphanumeric
+			const fireBaseRegex = /^[A-Za-z0-9]{28}$/;
+			if (!fireBaseRegex.test(value)) {
+				throw new Error("Invalid Id");
+			}
+			return true;
+		})
+		.withMessage("Invalid user Id"),
 ];
 
 // * validate Process Order Request -> /api/v1/order/:id

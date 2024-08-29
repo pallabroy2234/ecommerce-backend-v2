@@ -23,12 +23,7 @@ const orderRouter = express.Router();
 orderRouter.post("/new", validateNewOrder, runValidation(422), handleNewOrder);
 
 // * Get my orders[users order] -> /api/v1/order/myOrders
-orderRouter.get(
-	"/myOrders",
-	validateMyOrders,
-	runValidation(422),
-	handlerMyOrders,
-);
+orderRouter.get("/myOrders", validateMyOrders, runValidation(422), handlerMyOrders);
 
 // * Get all orders[admin] -> /api/v1/order/all
 
@@ -36,31 +31,13 @@ orderRouter.get("/all", isAdmin, handleGetAllOrders);
 
 // * Get Order details -> /api/v1/order/:id
 
-orderRouter.get(
-	"/:id",
-	validateOrderDetails,
-	runValidation(422),
-	handleGetOrderDetails,
-);
+orderRouter.get("/:id", validateOrderDetails, runValidation(422), isAdmin, handleGetOrderDetails);
 
 // * Process Order Route -> /api/v1/order/:id
 
-orderRouter.put(
-	"/:id",
-
-	validateProcessOrder,
-	runValidation(422),
-	isAdmin,
-	handleProcessOrder,
-);
+orderRouter.put("/:id", validateProcessOrder, runValidation(422), isAdmin, handleProcessOrder);
 
 // * Delete Order route -> /api/v1/order/:id
-orderRouter.delete(
-	"/:id",
-	validateDeleteOrder,
-	runValidation(422),
-	isAdmin,
-	handleDeleteOrder,
-);
+orderRouter.delete("/:id", validateDeleteOrder, runValidation(422), isAdmin, handleDeleteOrder);
 
 export default orderRouter;
