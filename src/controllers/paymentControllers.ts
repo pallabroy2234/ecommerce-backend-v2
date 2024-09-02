@@ -2,7 +2,6 @@ import {TryCatch} from "../middlewares/error.js";
 import {NextFunction, Request, Response} from "express";
 import {Coupon} from "../models/couponModal.js";
 import ErrorHandler from "../utils/utility-class.js";
-import {throws} from "node:assert";
 import {validateAllowedFields} from "../utils/allowedFields.js";
 import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
