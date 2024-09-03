@@ -56,7 +56,8 @@ export const handleGetAllUsers = TryCatch(async (req, res, next) => {
 	const users = await UserModel.find({});
 	return res.status(200).json({
 		success: true,
-		payload: users,
+		message: "Get all users",
+		payload: users || [],
 	});
 });
 
