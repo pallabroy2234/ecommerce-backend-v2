@@ -85,7 +85,7 @@ export const handleGetDashboardStats = TryCatch(async (req: Request, res: Respon
 		// * Latest four transactions
 		const latestTransactionsPromise = Order.find({})
 			.limit(4)
-			.select(["discount", "total", "status", "createdAt"])
+			.select(["discount", "total", "status", "createdAt", "orderItems"])
 			.sort({createdAt: -1});
 
 		const [
@@ -119,7 +119,6 @@ export const handleGetDashboardStats = TryCatch(async (req: Request, res: Respon
 			UserModel.countDocuments({gender: "male"}),
 			latestTransactionsPromise,
 		]);
-
 		// * Revenue
 		const thisMonthRevenue = thisMonthOrders.reduce((total, order) => total + (order.total || 0), 0);
 		const lastMonthRevenue = lastMonthOrders.reduce((total, order) => total + (order.total || 0), 0);
