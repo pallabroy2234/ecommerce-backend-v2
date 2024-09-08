@@ -39,6 +39,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 const allowedOrigins = [
 	"http://localhost:4000",
 	"https://ecommerce-frontend-v2-hf4ij4sfz-pallab-roy-tushars-projects.vercel.app/",
+	"http://localhost:5173",
 ];
 
 app.use(
@@ -52,7 +53,6 @@ app.use(
 			}
 			return callback(null, true);
 		},
-		credentials: true, // Enable cookies or authorization headers to be sent
 	}),
 );
 
