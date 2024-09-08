@@ -101,7 +101,7 @@ export const handleGetAllAdminProducts = TryCatch(async (req: Request, res: Resp
 		nodeCache.set("admin-products", JSON.stringify(products));
 	}
 
-	return res.status(products.length > 0 ? 200 : 404).json({
+	return res.status(200).json({
 		success: true,
 		message: "Fetch all product",
 		payload: products || [],
