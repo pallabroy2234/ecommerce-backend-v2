@@ -60,10 +60,10 @@ export const handleGetLatestProducts = TryCatch(async (req: Request, res: Respon
 		nodeCache.set("latestProducts", JSON.stringify(products));
 	}
 
-	return res.status(products.length > 0 ? 200 : 404).json({
-		success: products.length > 0 ? true : false,
-		message: products.length > 0 ? "Latest products" : "No products found",
-		payload: products.length > 0 ? products : [],
+	return res.status(200).json({
+		success: true,
+		message: "Latest products",
+		payload: products || [],
 	});
 });
 
@@ -80,10 +80,10 @@ export const handleGetAllCategories = TryCatch(async (req: Request, res: Respons
 		nodeCache.set("categories", JSON.stringify(categories));
 	}
 
-	return res.status(categories.length > 0 ? 200 : 404).json({
-		success: categories.length > 0 ? true : false,
-		message: categories.length > 0 ? "All available categories" : "No categories found",
-		payload: categories.length > 0 ? categories : [],
+	return res.status(200).json({
+		success: true,
+		message: "All available categories",
+		payload: categories || [],
 	});
 });
 
@@ -102,9 +102,9 @@ export const handleGetAllAdminProducts = TryCatch(async (req: Request, res: Resp
 	}
 
 	return res.status(products.length > 0 ? 200 : 404).json({
-		success: products.length > 0 ? true : false,
-		message: products.length > 0 ? "Fetch all product" : "No products found",
-		payload: products.length > 0 ? products : [],
+		success: true,
+		message: "Fetch all product",
+		payload: products || [],
 	});
 });
 
@@ -125,7 +125,7 @@ export const handleGetSingleProduct = TryCatch(async (req: Request, res: Respons
 	}
 
 	return res.status(product ? 200 : 404).json({
-		success: product ? true : false,
+		success: !!product,
 		message: product ? "Product found" : "Product not found",
 		payload: product ? product : {},
 	});
@@ -248,10 +248,10 @@ export const handleGetAllProducts = TryCatch(
 
 		const [products, totalProducts] = await Promise.all([productPromise, Product.countDocuments(baseQuery)]);
 
-		return res.status(products.length > 0 ? 200 : 404).json({
-			success: products.length > 0 ? true : false,
-			message: products.length > 0 ? "All products" : "No products found",
-			payload: products,
+		return res.status(200).json({
+			success: true,
+			message: "All products",
+			payload: products || [],
 			pagination: {
 				totalNumberOfProducts: totalProducts,
 				totalPages: Math.ceil(totalProducts / limit),
