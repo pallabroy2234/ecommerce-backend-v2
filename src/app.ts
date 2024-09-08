@@ -36,11 +36,7 @@ app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(
-	cors({
-		origin: "*",
-	}),
-);
+app.use(cors());
 
 //  Routes Define
 app.use("/api/v1/user", userRouter);
