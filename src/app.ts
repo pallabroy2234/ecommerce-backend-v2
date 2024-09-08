@@ -35,7 +35,28 @@ swaggerDocs(app, port);
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cors());
+
+const allowedOrigins = [
+	"http://localhost:4000",
+	"https://ecommerce-frontend-v2-hf4ij4sfz-pallab-roy-tushars-projects.vercel.app/",
+];
+
+app.use(
+	cors({
+		origin: function (origin, callback) {
+			// Allow requests with no origin (e.g., mobile apps or curl)
+			if (!origin) return callback(null, true);
+			if (allowedOrigins.indexOf(origin) === -1) {
+				const msg = "The CORS policy for this site does not allow access from the specified origin.";
+				return callback(new Error(msg), false);
+			}
+			return callback(null, true);
+		},
+		credentials: true, // Enable cookies or authorization headers to be sent
+	}),
+);
+
+// app.use(cors());
 
 //  Routes Define
 app.use("/api/v1/user", userRouter);
