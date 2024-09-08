@@ -38,7 +38,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 const allowedOrigins = [
 	"http://localhost:4000",
-	"https://ecommerce-frontend-v2-hf4ij4sfz-pallab-roy-tushars-projects.vercel.app/",
+	"https://ecommerce-frontend-v2-hf4ij4sfz-pallab-roy-tushars-projects.vercel.app",
 	"http://localhost:5173",
 ];
 
