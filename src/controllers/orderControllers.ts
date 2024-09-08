@@ -94,10 +94,10 @@ export const handlerMyOrders = TryCatch(async (req: Request, res: Response, next
 		nodeCache.set(`my_orders_${id}`, JSON.stringify(orders));
 	}
 
-	return res.status(orders.length > 0 ? 200 : 404).json({
-		success: orders.length > 0,
-		message: orders.length > 0 ? "My orders" : "No orders found",
-		payload: orders,
+	return res.status(200).json({
+		success: true,
+		message: "My orders",
+		payload: orders || [],
 	});
 });
 
@@ -113,10 +113,10 @@ export const handleGetAllOrders = TryCatch(async (req: Request, res: Response, n
 		nodeCache.set("all-admin-orders", JSON.stringify(orders));
 	}
 
-	return res.status(orders.length > 0 ? 200 : 404).json({
-		success: orders.length > 0,
-		message: orders.length > 0 ? "Fet all orders" : "No orders found",
-		payload: orders,
+	return res.status(200).json({
+		success: true,
+		message: "Fet all orders",
+		payload: orders || [],
 	});
 });
 
