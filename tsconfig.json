@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "NodeNext",
-    "rootDir": "src",
-    "moduleResolution": "Node",
+    "rootDir": "./",
+    "moduleResolution": "NodeNext",
     "outDir": "dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -12,8 +12,8 @@
     "resolveJsonModule": true
   },
   "include": [
-    "api/**/*.ts",
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "api/**/*.ts"
   ],
   "exclude": [
     "node_modules"
