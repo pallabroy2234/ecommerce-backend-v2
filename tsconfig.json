@@ -25,7 +25,7 @@
     "outDir": "dist",
     "sourceMap": true,
     "target": "ESNext",
-    "module": "CommonJS",
+    "module": "Node16",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
