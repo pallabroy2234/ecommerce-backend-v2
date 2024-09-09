@@ -9,6 +9,7 @@ import {getDirname} from "./getDirname.js";
 const {combine, timestamp, printf, errors, colorize, json} = format;
 
 const __dirname = getDirname(import.meta.url);
+
 const logFormat = printf(({level, message, timestamp, stack}) => {
 	return `${timestamp} ${level}: ${stack || message}`;
 });
@@ -63,53 +64,3 @@ logger.add(
 // }
 
 export default logger;
-
-// import path from "path";
-// import dotenv from "dotenv";
-// import {createLogger, format, transports} from "winston";
-// import DailyRotateFile from "winston-daily-rotate-file";
-//
-// dotenv.config();
-//
-// const {combine, timestamp, printf, errors, colorize, json} = format;
-//
-// // Use the CommonJS `__dirname`
-// const logFormat = printf(({level, message, timestamp, stack}) => {
-// 	return `${timestamp} ${level}: ${stack || message}`;
-// });
-//
-// const logger = createLogger({
-// 	level: "info",
-// 	format: combine(timestamp({format: "YYYY-MM-DD HH:mm:ss"}), errors({stack: true}), logFormat),
-// 	transports: [
-// 		new DailyRotateFile({
-// 			dirname: path.join(__dirname, "../../src/logs"),
-// 			filename: "app-%DATE%.log",
-// 			datePattern: "YYYY-MM-DD",
-// 			maxSize: "5m",
-// 			maxFiles: "5d",
-// 			zippedArchive: true,
-// 			format: combine(json()),
-// 		}),
-// 	],
-// 	exceptionHandlers: [
-// 		new transports.File({
-// 			dirname: path.join(__dirname, "../../src/logs"),
-// 			filename: "exceptions.log",
-// 		}),
-// 	],
-// 	rejectionHandlers: [
-// 		new transports.File({
-// 			dirname: path.join(__dirname, "../../src/logs"),
-// 			filename: "rejections.log",
-// 		}),
-// 	],
-// });
-//
-// logger.add(
-// 	new transports.Console({
-// 		format: combine(colorize(), logFormat),
-// 	}),
-// );
-//
-// export default logger;
