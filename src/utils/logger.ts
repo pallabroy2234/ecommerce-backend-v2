@@ -68,16 +68,16 @@
 //
 // export default logger;
 
-import dotenv from "dotenv";
-import DailyRotateFile from "winston-daily-rotate-file";
 import path from "path";
+import dotenv from "dotenv";
 import {createLogger, format, transports} from "winston";
+import DailyRotateFile from "winston-daily-rotate-file";
 
 dotenv.config();
 
 const {combine, timestamp, printf, errors, colorize, json} = format;
 
-// Use CommonJS __dirname directly
+// Use the CommonJS `__dirname`
 const logFormat = printf(({level, message, timestamp, stack}) => {
 	return `${timestamp} ${level}: ${stack || message}`;
 });
