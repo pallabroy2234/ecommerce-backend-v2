@@ -31,5 +31,12 @@
     "noImplicitAny": true,
     "strict": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "api/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
