@@ -61,3 +61,5 @@ app.use(errorMiddleWare);
 app.listen(port, async () => {
 	logger.info(`Server is working on http://localhost:${port}`);
 });
+
+export default app;
