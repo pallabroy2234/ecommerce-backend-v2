@@ -1,3 +1,5 @@
 import app from "../src/app.js";
 
-export default app;
+const exportApp = app;
+
+export default exportApp;
