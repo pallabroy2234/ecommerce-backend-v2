@@ -9,6 +9,7 @@ import {validateAllowedFields} from "../utils/allowedFields.js";
 import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 import {escapeRegex} from "../utils/escapeRegex.js";
 import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
+import {v2 as cloudinary} from "cloudinary";
 
 // * Create New Product handler ->  /api/v1/product/new
 export const handleNewProduct = TryCatch(
@@ -27,9 +28,21 @@ export const handleNewProduct = TryCatch(
 			return next(new ErrorHandler(`Invalid fields: ${invalidFields.join(", ")}`, 400));
 		}
 
+		let imageUrl = "";
+		if (image) {
+			try {
+				const result = await cloudinary.uploader.upload(image.path, {
+					folder: "ecommerce-v2/products",
+				});
+				imageUrl = result.secure_url;
+			} catch (err: any) {
+				return next(new ErrorHandler("Failed to upload image", 500));
+			}
+		}
+
 		const newProduct = await Product.create({
 			name,
-			image: image?.path,
+			image: imageUrl,
 			category,
 			price,
 			stock,
