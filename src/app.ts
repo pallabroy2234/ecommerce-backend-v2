@@ -8,6 +8,7 @@ import connectDatabase from "./utils/feature.js";
 import swaggerDocs from "./utils/swagger.js";
 import Stripe from "stripe";
 import cors from "cors";
+import {v2 as cloudinary} from "cloudinary";
 
 dotenv.config();
 const port: string | number = process.env.PORT || 5000;
@@ -50,6 +51,13 @@ app.use("/public", express.static("public"));
 //  Basic route
 app.get("/", (req, res) => {
 	res.send("Welcome to Ecommerce v2 Application!");
+});
+
+// * config cloudinary
+cloudinary.config({
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // ! Not Found Middleware
