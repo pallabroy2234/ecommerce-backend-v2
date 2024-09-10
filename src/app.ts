@@ -3,9 +3,9 @@ import dotenv from "dotenv";
 import logger from "./utils/logger.js";
 import morgan from "morgan";
 import bodyParser from "body-parser";
-import {errorMiddleWare, notFound} from "./middlewares/error.js";
-import connectDatabase from "./utils/feature.js";
-import swaggerDocs from "./utils/swagger.js";
+import {errorMiddleWare, notFound} from "./middlewares/error";
+import connectDatabase from "./utils/feature";
+import swaggerDocs from "./utils/swagger";
 import Stripe from "stripe";
 import cors from "cors";
 import {v2 as cloudinary} from "cloudinary";
@@ -14,18 +14,15 @@ dotenv.config();
 const port: string | number = process.env.PORT || 5000;
 const stripeKey: string = process.env.STRIPE_SECRET_KEY || "";
 
-// *   Database connection
-await connectDatabase();
-
 // * Stripe
 export const stripe = new Stripe(stripeKey, {});
 
 // *  Importing routes
-import {userRouter} from "./routes/userRouter.js";
-import productRouter from "./routes/productRouter.js";
-import orderRouter from "./routes/orderRouter.js";
-import paymentRouter from "./routes/paymentRouter.js";
-import dashboardRouter from "./routes/statsRouter.js";
+import {userRouter} from "./routes/userRouter";
+import productRouter from "./routes/productRouter";
+import orderRouter from "./routes/orderRouter";
+import paymentRouter from "./routes/paymentRouter";
+import dashboardRouter from "./routes/statsRouter";
 
 const app: Express = express();
 
@@ -67,6 +64,8 @@ app.use(notFound);
 app.use(errorMiddleWare);
 
 app.listen(port, async () => {
+	// *   Database connection
+	await connectDatabase();
 	logger.info(`Server is working on http://localhost:${port}`);
 });
 
