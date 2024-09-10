@@ -27,7 +27,7 @@ import orderRouter from "./routes/orderRouter.js";
 import paymentRouter from "./routes/paymentRouter.js";
 import dashboardRouter from "./routes/statsRouter.js";
 
-export const app: Express = express();
+const app: Express = express();
 
 // * Swagger Docs
 swaggerDocs(app, port);
@@ -69,3 +69,5 @@ app.use(errorMiddleWare);
 app.listen(port, async () => {
 	logger.info(`Server is working on http://localhost:${port}`);
 });
+
+export default app;
