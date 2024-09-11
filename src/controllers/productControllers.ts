@@ -10,6 +10,7 @@ import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 import {escapeRegex} from "../utils/escapeRegex.js";
 import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
 import {v2 as cloudinary} from "cloudinary";
+import {deleteImageFromCloudinary, publicIdWithOutExtensionFromUrl} from "../utils/cloudinary-utility";
 
 // * Create New Product handler ->  /api/v1/product/new
 export const handleNewProduct = TryCatch(
@@ -35,6 +36,8 @@ export const handleNewProduct = TryCatch(
 					folder: "ecommerce-v2/products",
 				});
 				imageUrl = result.secure_url;
+				// 	delete Image after upload to cloudinary
+				deleteImage(image.path);
 			} catch (err: any) {
 				return next(new ErrorHandler("Failed to upload image", 500));
 			}
@@ -173,12 +176,24 @@ export const handleUpdateSingleProduct = TryCatch(async (req: Request, res: Resp
 	// * Update allowed fields
 	let updates: Partial<ProductUpdateRequestBody> = prepareUpdates(req.body, allowFields);
 
-	//  * Old image path delete and new image path update
 	if (image) {
-		if (productExists.image) {
-			deleteImage(productExists.image);
+		try {
+			if (productExists.image) {
+				const publicId = publicIdWithOutExtensionFromUrl(productExists.image);
+				const deleteImage = await deleteImageFromCloudinary("ecommerce-v2/products", publicId);
+				if (deleteImage instanceof Error) {
+					return next(deleteImage);
+				}
+			}
+			const result = await cloudinary.uploader.upload(image.path, {
+				folder: "ecommerce-v2/products",
+			});
+			updates.image = result.secure_url;
+			// 	delete Image after upload to cloudinary
+			deleteImage(image.path);
+		} catch (err: any) {
+			return next(new ErrorHandler("Failed to upload image", 500));
 		}
-		updates.image = image.path;
 	}
 
 	const updatedProduct = await Product.findByIdAndUpdate({_id: id}, updates, {
