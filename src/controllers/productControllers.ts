@@ -1,6 +1,5 @@
 import {Request, Response, NextFunction} from "express";
 import {TryCatch} from "../middlewares/error.js";
-
 import {Product} from "../models/productModel.js";
 import {BaseQuery, NewProductRequestBody, ProductUpdateRequestBody, SearchQueryParams} from "../types/types.js";
 import ErrorHandler from "../utils/utility-class.js";
@@ -11,6 +10,7 @@ import {escapeRegex} from "../utils/escapeRegex.js";
 import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
 import {v2 as cloudinary} from "cloudinary";
 import {deleteImageFromCloudinary, publicIdWithOutExtensionFromUrl} from "../utils/cloudinary-utility";
+import mongoose from "mongoose";
 
 // * Create New Product handler ->  /api/v1/product/new
 export const handleNewProduct = TryCatch(
@@ -222,14 +222,17 @@ export const handleDeleteProduct = TryCatch(async (req: Request, res: Response, 
 
 	const productExists = await Product.findById({_id: id});
 	if (!productExists) return next(new ErrorHandler("Product not found", 404));
+	const publicId = publicIdWithOutExtensionFromUrl(productExists.image);
+	const [deletedProduct, deleteImage] = await Promise.all([
+		Product.findByIdAndDelete({_id: id}),
+		deleteImageFromCloudinary("ecommerce-v2/products", publicId),
+	]);
 
-	const deletedProduct = await Product.findByIdAndDelete({_id: id});
 	if (!deletedProduct) return next(new ErrorHandler("Error deleting product", 404));
-
-	// delete image from cloudinary
-	const publicId = publicIdWithOutExtensionFromUrl(deletedProduct.image);
-	const deleteImage = await deleteImageFromCloudinary("ecommerce-v2/products", publicId);
 	if (deleteImage instanceof Error) {
+		await Product.create({
+			...productExists.toObject(),
+		});
 		return next(deleteImage);
 	}
 
