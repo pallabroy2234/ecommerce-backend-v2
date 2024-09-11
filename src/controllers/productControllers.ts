@@ -223,16 +223,17 @@ export const handleDeleteProduct = TryCatch(async (req: Request, res: Response, 
 	const productExists = await Product.findById({_id: id});
 	if (!productExists) return next(new ErrorHandler("Product not found", 404));
 
-	if (productExists.image) {
-		deleteImage(productExists.image);
-	}
-
 	const deletedProduct = await Product.findByIdAndDelete({_id: id});
-
-	//  Invalidate the cache
-
 	if (!deletedProduct) return next(new ErrorHandler("Error deleting product", 404));
 
+	// delete image from cloudinary
+	const publicId = publicIdWithOutExtensionFromUrl(deletedProduct.image);
+	const deleteImage = await deleteImageFromCloudinary("ecommerce-v2/products", publicId);
+	if (deleteImage instanceof Error) {
+		return next(deleteImage);
+	}
+
+	//  Invalidate the cache
 	invalidateCache({
 		product: true,
 		productId: String(deletedProduct._id),
