@@ -1,6 +1,7 @@
 # E-commerce Backend - MERN Stack Project
 
-This repository contains the backend API for the full-stack e-commerce platform built with the MERN stack (MongoDB, Express.js, React.js, Node.js). The backend handles user authentication, product management, order processing, payment integration with Stripe, and image handling via Cloudinary.
+This repository contains the backend API for the full-stack e-commerce platform built with the MERN stack (MongoDB, Express.js, React.js, Node.js). The backend handles user authentication, product management, order processing, payment integration with **Stripe**, image handling via **Cloudinary**, and also implements a caching system using **Node Cache**.
+
 
 Frontend code and details are managed in a separate repository.
 ### [Frontend Repository](https://github.com/pallabroy2234/ecommerce-frontend-v2.git)
@@ -29,6 +30,7 @@ Frontend code and details are managed in a separate repository.
 - **Winston**: ^3.13.0 - Logging system.
 - **Multer**: ^1.4.5-lts.1 - File upload handling.
 - **Swagger**: ^6.2.8 - API documentation.
+- **Node Cache**: ^5.1.2 - Cache system. 
 
 ## Installation
 
