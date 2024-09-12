@@ -1,15 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "NodeNext",
+    "rootDir": "./src",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "esModuleInterop": false,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "src/**/*.ts",
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+
 //{
 //  "compilerOptions": {
-//    "target": "ES2020",
-//    "module": "NodeNext",
 //    "rootDir": "./",
-//    "moduleResolution": "NodeNext",
 //    "outDir": "dist",
+//    "sourceMap": true,
+//    "target": "ESNext",
+//    "module": "CommonJS",
 //    "esModuleInterop": true,
 //    "forceConsistentCasingInFileNames": true,
+//    "noImplicitAny": true,
 //    "strict": true,
-//    "skipLibCheck": true,
-//    "resolveJsonModule": true
+//    "skipLibCheck": true
 //  },
 //  "include": [
 //    "src/**/*.ts",
@@ -18,26 +40,3 @@
 //  "exclude": [
 //    "node_modules"
 //  ]
-//}
-
-{
-  "compilerOptions": {
-    "rootDir": "./",
-    "outDir": "dist",
-    "sourceMap": true,
-    "target": "ESNext",
-    "module": "CommonJS",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
-    "strict": true,
-    "skipLibCheck": true
-  },
-  "include": [
-    "src/**/*.ts",
-    "api/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
-}

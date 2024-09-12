@@ -3,9 +3,9 @@ import dotenv from "dotenv";
 import logger from "./utils/logger.js";
 import morgan from "morgan";
 import bodyParser from "body-parser";
-import {errorMiddleWare, notFound} from "./middlewares/error";
-import connectDatabase from "./utils/feature";
-import swaggerDocs from "./utils/swagger";
+import {errorMiddleWare, notFound} from "./middlewares/error.js";
+import connectDatabase from "./utils/feature.js";
+import swaggerDocs from "./utils/swagger.js";
 import Stripe from "stripe";
 import cors from "cors";
 import {v2 as cloudinary} from "cloudinary";
@@ -18,11 +18,11 @@ const stripeKey: string = process.env.STRIPE_SECRET_KEY || "";
 export const stripe = new Stripe(stripeKey, {});
 
 // *  Importing routes
-import {userRouter} from "./routes/userRouter";
-import productRouter from "./routes/productRouter";
-import orderRouter from "./routes/orderRouter";
-import paymentRouter from "./routes/paymentRouter";
-import dashboardRouter from "./routes/statsRouter";
+import {userRouter} from "./routes/userRouter.js";
+import productRouter from "./routes/productRouter.js";
+import orderRouter from "./routes/orderRouter.js";
+import paymentRouter from "./routes/paymentRouter.js";
+import dashboardRouter from "./routes/statsRouter.js";
 
 const app: Express = express();
 

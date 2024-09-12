@@ -5,9 +5,7 @@ import {Product} from "../models/productModel.js";
 import {UserModel} from "../models/userModel.js";
 import {Order} from "../models/orderModel.js";
 import {calculatePercentage} from "../utils/calculatePercentage.js";
-import {tr} from "@faker-js/faker";
 import {getCategories, getDataByMonth} from "../utils/statsUtils.js";
-import ErrorHandler from "../utils/utility-class.js";
 
 /**
  * @description     Handles Get Dashboard stats

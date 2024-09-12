@@ -1,6 +1,5 @@
 import {v2 as cloudinary} from "cloudinary";
-import ErrorHandler from "./utility-class";
-import {deleteImage} from "../validators";
+import ErrorHandler from "./utility-class.js";
 
 export const publicIdWithOutExtensionFromUrl = (imageUrl: string) => {
 	const pathSegments = imageUrl.split("/");

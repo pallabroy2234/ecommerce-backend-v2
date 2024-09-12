@@ -9,7 +9,7 @@ import {validateAllowedQueryParams} from "../utils/allowedQueryParams.js";
 import {escapeRegex} from "../utils/escapeRegex.js";
 import {invalidateCache, nodeCache} from "../utils/nodeCache.js";
 import {v2 as cloudinary} from "cloudinary";
-import {deleteImageFromCloudinary, publicIdWithOutExtensionFromUrl} from "../utils/cloudinary-utility";
+import {deleteImageFromCloudinary, publicIdWithOutExtensionFromUrl} from "../utils/cloudinary-utility.js";
 import mongoose from "mongoose";
 
 // * Create New Product handler ->  /api/v1/product/new
