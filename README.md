@@ -2,6 +2,7 @@
 
 This repository contains the backend API for the full-stack e-commerce platform built with the MERN stack (MongoDB, Express.js, React.js, Node.js). The backend handles user authentication, product management, order processing, payment integration with Stripe, and image handling via Cloudinary.
 
+Frontend code and details are managed in a separate repository.
 ### [Frontend Repository](https://github.com/pallabroy2234/ecommerce-frontend-v2.git)
 ### [Live Demo Frontend](https://ecommerce-frontend-v2.vercel.app/)
 > **Note:** The frontend is hosted on **Vercel**, and the backend is hosted on **Render**'s free hosting.  
