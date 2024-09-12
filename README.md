@@ -4,6 +4,10 @@ This repository contains the backend API for the full-stack e-commerce platform 
 
 ### [Frontend Repository](https://github.com/pallabroy2234/ecommerce-frontend-v2.git)
 ### [Live Demo Frontend](https://ecommerce-frontend-v2.vercel.app/)
+> **Note:** The frontend is hosted on **Vercel**, and the backend is hosted on **Render**'s free hosting. The backend server may take some time to start up if it has been inactive for a while.
+
+<span style="color: orange;">**Important:** The backend delay is expected due to the nature of free-tier hosting on Render.</span>
+
 
 ## Features
 
