@@ -5,8 +5,8 @@ This repository contains the backend API for the full-stack e-commerce platform 
 
 Frontend code and details are managed in a separate repository.
 ### [Frontend Repository](https://github.com/pallabroy2234/ecommerce-frontend-v2.git)
-### [Live Demo Frontend](https://ecommerce-frontend-v2.vercel.app/)
-> **Note:** The frontend is hosted on **Vercel**, and the backend is hosted on **Render**'s free hosting.  
+### [Live Demo Frontend](https://ecom-frontend-v2-b7a6fa88076b.herokuapp.com/)
+> **Note:** The frontend is hosted on **Heroku**, and the backend is hosted on **Heroku**'s free hosting.  
 > _The backend server may take some time to start up if it has been inactive for a while._
 
 
